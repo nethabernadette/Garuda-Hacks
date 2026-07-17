@@ -19,7 +19,7 @@ class PromptRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return {"message": "FoodLink AI Service is running"}
+    return {"message": "Jalin AI Service is running"}
 
 
 @app.post("/chat")

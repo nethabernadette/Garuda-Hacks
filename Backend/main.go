@@ -12,6 +12,7 @@ import (
 
 	"garuda-hacks/backend/auth"
 	"garuda-hacks/backend/internal/agreement"
+	"garuda-hacks/backend/internal/ai"
 	"garuda-hacks/backend/internal/chat"
 	"garuda-hacks/backend/internal/document"
 	"garuda-hacks/backend/notifications"
@@ -227,7 +228,7 @@ func main() {
 		os.Setenv("JWT_ACCESS_TOKEN_TTL_SECONDS", "3600")
 	}
 	if os.Getenv("PORT") == "" {
-		os.Setenv("PORT", "8081")
+		os.Setenv("PORT", "8080")
 	}
 
 	// 1. Initialize SQLite Database using our custom SQL-intercepting driver
@@ -280,6 +281,10 @@ func main() {
 		log.Fatalf("Failed to migrate offer schema: %v", err)
 	}
 
+	if err := ai.Migrate(db); err != nil {
+		log.Fatalf("Failed to migrate AI schema: %v", err)
+	}
+
 	log.Println("Migrations executed successfully.")
 
 	// 3. Initialize Services and Handlers
@@ -326,6 +331,7 @@ func main() {
 	agreement.RegisterRoutes(mux, db, authenticateMdw)
 	chat.RegisterRoutes(mux, db, authenticateMdw)
 	document.RegisterRoutes(mux, db, authenticateMdw)
+	ai.RegisterRoutes(mux, db, authenticateMdw)
 
 	// 5. Set up Gin engine and routing
 	gin.SetMode(gin.DebugMode)

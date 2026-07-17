@@ -162,6 +162,53 @@ go test ./...
 
 GET /recommendations
 
+Requires authentication. Returns personalized homepage recommendations from database history and Groq when enabled.
+
+AI aliases:
+
+POST /ai/search-history
+GET /ai/recommendations
+POST /ai/matchmaking
+GET /agreements/:id/ai-verification
+POST /agreements/:id/ai-verification
+GET /agreements/:id/negotiation-summary
+
+Agreement verification request:
+
+```json
+{
+  "buyer_submission": {
+    "buyer_company": "Buyer Co",
+    "producer_company": "Producer Co",
+    "product": "Premium Rice",
+    "quantity": 500,
+    "unit": "kg",
+    "agreed_unit_price": 40000,
+    "agreed_total_price": 20000000,
+    "currency": "IDR",
+    "delivery_area": "Jakarta",
+    "delivery_schedule": "2026-07-25",
+    "payment_terms": "Net 14",
+    "additional_terms": ["Food grade packaging"]
+  },
+  "producer_submission": {
+    "buyer_company": "Buyer Co",
+    "producer_company": "Producer Co",
+    "product": "Premium Rice",
+    "quantity": 500,
+    "unit": "kg",
+    "agreed_unit_price": 40000,
+    "currency": "IDR",
+    "delivery_area": "Jakarta",
+    "delivery_schedule": "2026-07-25",
+    "payment_terms": "Net 14",
+    "additional_terms": ["Food grade packaging"]
+  },
+  "buyer_final_confirm": true,
+  "producer_final_confirm": true
+}
+```
+
 POST /matches/interest
 
 GET /matches
