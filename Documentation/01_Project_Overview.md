@@ -27,7 +27,7 @@ Buyers submit RFQs. The backend aggregates nearby, similar requests into a Deman
 ## Tech Stack
 Frontend: Next.js + Tailwind
 Backend: NestJS
-Database: PostgreSQL + Prisma
+Database: PostgreSQL + GORM
 Auth: JWT
 
 ## Success Metrics
