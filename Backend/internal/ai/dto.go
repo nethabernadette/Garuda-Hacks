@@ -34,7 +34,7 @@ type RecommendationItem struct {
 }
 
 type RecommendationResponse struct {
-	ProfileSummary  ProfileSummary      `json:"profile_summary"`
+	ProfileSummary  ProfileSummary       `json:"profile_summary"`
 	Recommendations []RecommendationItem `json:"recommendations"`
 }
 
@@ -44,16 +44,16 @@ type MatchmakingRequest struct {
 }
 
 type MatchCandidate struct {
-	PartnerID               string                 `json:"partner_id"`
-	EntityID                string                 `json:"entity_id,omitempty"`
-	EntityType              string                 `json:"entity_type,omitempty"`
-	CompatibilityScore      int                    `json:"compatibility_score"`
-	MatchStatus             string                 `json:"match_status"`
-	MatchedFields           []string               `json:"matched_fields"`
+	PartnerID                string                 `json:"partner_id"`
+	EntityID                 string                 `json:"entity_id,omitempty"`
+	EntityType               string                 `json:"entity_type,omitempty"`
+	CompatibilityScore       int                    `json:"compatibility_score"`
+	MatchStatus              string                 `json:"match_status"`
+	MatchedFields            []string               `json:"matched_fields"`
 	MissingOrConflictingReqs []string               `json:"missing_or_conflicting_requirements"`
-	Reasoning               []string               `json:"reasoning"`
-	SuggestedAction         string                 `json:"suggested_action"`
-	PublicData              map[string]interface{} `json:"public_data,omitempty"`
+	Reasoning                []string               `json:"reasoning"`
+	SuggestedAction          string                 `json:"suggested_action"`
+	PublicData               map[string]interface{} `json:"public_data,omitempty"`
 }
 
 type MatchmakingResponse struct {
@@ -69,47 +69,47 @@ type MatchmakingResponse struct {
 }
 
 type AgreementVerificationResponse struct {
-	AgreementID           string                       `json:"agreement_id"`
-	MatchID               string                       `json:"match_id"`
-	CanRevealContact      bool                         `json:"can_reveal_contact"`
-	RecommendedApproval   bool                         `json:"recommended_approval"`
-	OverallStatus         string                       `json:"overall_status"`
-	VerificationStatus    string                       `json:"verification_status,omitempty"`
+	AgreementID           string                          `json:"agreement_id"`
+	MatchID               string                          `json:"match_id"`
+	CanRevealContact      bool                            `json:"can_reveal_contact"`
+	RecommendedApproval   bool                            `json:"recommended_approval"`
+	OverallStatus         string                          `json:"overall_status"`
+	VerificationStatus    string                          `json:"verification_status,omitempty"`
 	FieldComparison       map[string]AgreementFieldResult `json:"field_comparison"`
-	Conflicts             []string                     `json:"conflicts"`
-	MissingInformation    []string                     `json:"missing_information"`
-	NormalizedAgreement   AgreementSubmission          `json:"normalized_agreement"`
-	Summary               string                       `json:"summary"`
-	NextAction            string                       `json:"next_action"`
-	ConfirmedTerms        []string                     `json:"confirmed_terms,omitempty"`
-	MissingTerms          []string                     `json:"missing_terms,omitempty"`
-	NegotiationHighlights []string                     `json:"negotiation_highlights,omitempty"`
-	Risks                 []string                     `json:"risks,omitempty"`
-	RecommendedNextSteps  []string                     `json:"recommended_next_steps,omitempty"`
+	Conflicts             []string                        `json:"conflicts"`
+	MissingInformation    []string                        `json:"missing_information"`
+	NormalizedAgreement   AgreementSubmission             `json:"normalized_agreement"`
+	Summary               string                          `json:"summary"`
+	NextAction            string                          `json:"next_action"`
+	ConfirmedTerms        []string                        `json:"confirmed_terms,omitempty"`
+	MissingTerms          []string                        `json:"missing_terms,omitempty"`
+	NegotiationHighlights []string                        `json:"negotiation_highlights,omitempty"`
+	Risks                 []string                        `json:"risks,omitempty"`
+	RecommendedNextSteps  []string                        `json:"recommended_next_steps,omitempty"`
 }
 
 type AgreementVerificationRequest struct {
-	BuyerSubmission     AgreementSubmission `json:"buyer_submission"`
-	ProducerSubmission  AgreementSubmission `json:"producer_submission"`
-	BuyerFinalConfirm   bool                `json:"buyer_final_confirm"`
+	BuyerSubmission      AgreementSubmission `json:"buyer_submission"`
+	ProducerSubmission   AgreementSubmission `json:"producer_submission"`
+	BuyerFinalConfirm    bool                `json:"buyer_final_confirm"`
 	ProducerFinalConfirm bool                `json:"producer_final_confirm"`
 }
 
 type AgreementSubmission struct {
-	BuyerCompany      string   `json:"buyer_company"`
-	ProducerCompany   string   `json:"producer_company"`
-	Product           string   `json:"product"`
-	Quantity          *float64 `json:"quantity"`
-	Unit              string   `json:"unit"`
-	AgreedUnitPrice   *float64 `json:"agreed_unit_price"`
-	AgreedTotalPrice  *float64 `json:"agreed_total_price"`
-	Currency          string   `json:"currency"`
-	DeliveryArea      string   `json:"delivery_area"`
-	DeliverySchedule  string   `json:"delivery_schedule"`
-	PaymentTerms      string   `json:"payment_terms"`
-	Certifications    []string `json:"certifications,omitempty"`
+	BuyerCompany        string   `json:"buyer_company"`
+	ProducerCompany     string   `json:"producer_company"`
+	Product             string   `json:"product"`
+	Quantity            *float64 `json:"quantity"`
+	Unit                string   `json:"unit"`
+	AgreedUnitPrice     *float64 `json:"agreed_unit_price"`
+	AgreedTotalPrice    *float64 `json:"agreed_total_price"`
+	Currency            string   `json:"currency"`
+	DeliveryArea        string   `json:"delivery_area"`
+	DeliverySchedule    string   `json:"delivery_schedule"`
+	PaymentTerms        string   `json:"payment_terms"`
+	Certifications      []string `json:"certifications,omitempty"`
 	QualityRequirements []string `json:"quality_requirements,omitempty"`
-	AdditionalTerms   []string `json:"additional_terms"`
+	AdditionalTerms     []string `json:"additional_terms"`
 }
 
 type AgreementFieldResult struct {
@@ -118,11 +118,11 @@ type AgreementFieldResult struct {
 }
 
 type NegotiationSummaryResponse struct {
-	AgreementDraft AgreementSubmission   `json:"agreement_draft"`
-	AgreedTerms    []string              `json:"agreed_terms"`
-	UnresolvedTerms []string             `json:"unresolved_terms"`
-	Evidence       []NegotiationEvidence `json:"evidence"`
-	Summary        string                `json:"summary"`
+	AgreementDraft  AgreementSubmission   `json:"agreement_draft"`
+	AgreedTerms     []string              `json:"agreed_terms"`
+	UnresolvedTerms []string              `json:"unresolved_terms"`
+	Evidence        []NegotiationEvidence `json:"evidence"`
+	Summary         string                `json:"summary"`
 }
 
 type NegotiationEvidence struct {

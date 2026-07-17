@@ -1,7 +1,0 @@
-./controller.go
-./dto.go
-./generator.go
-./repository.go
-./routes.go
-./service.go
-./service_test.go

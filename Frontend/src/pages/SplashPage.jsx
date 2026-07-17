@@ -1,15 +1,14 @@
 import { Link } from 'react-router-dom';
+import logoJalin from '../assets/logo_Jalin.png';
 
 export function SplashPage() {
   return (
     <main className="standalone-phone">
       <section className="splash">
-        <span className="halo" />
-        <span className="halo h2" />
-        <div className="ali-big">🌱</div>
+        <img className="splash-logo" src={logoJalin} alt="Logo Jalin" />
         <div className="wordmark">
-          <h1>Jal<span>in</span></h1>
-          <p>FoodLink AI · Temukan mitra pangan paling cocok</p>
+          <h1><span className="edge">J</span><span className="ali">ali</span><span className="edge">n</span></h1>
+          <p>Match Better. Grow Together</p>
         </div>
         <Link className="start-btn" to="/role">Mulai Sekarang</Link>
       </section>

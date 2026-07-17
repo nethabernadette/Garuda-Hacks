@@ -68,6 +68,8 @@ type AgreementItemRequest struct {
 // ConfirmAgreementRequest is the request DTO for confirming an agreement.
 type ConfirmAgreementRequest struct{}
 
+type DemoConfirmAgreementRequest struct{}
+
 // AgreementResponse is returned by agreement endpoints.
 type AgreementResponse struct {
 	ID                  string                  `json:"id"`

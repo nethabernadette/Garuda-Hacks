@@ -65,6 +65,22 @@ func (c *Controller) GetAgreement(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, JSONResponse{Success: true, Data: response})
 }
 
+func (c *Controller) ListAgreements(w http.ResponseWriter, r *http.Request) {
+	userID, ok := currentUserID(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, ErrUnauthorized.Error())
+		return
+	}
+
+	response, err := c.service.ListAgreements(r.Context(), userID)
+	if err != nil {
+		writeServiceError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, JSONResponse{Success: true, Data: response})
+}
+
 // UpdateAgreement handles PUT /agreements/{id}.
 func (c *Controller) UpdateAgreement(w http.ResponseWriter, r *http.Request) {
 	userID, ok := currentUserID(r)
@@ -128,6 +144,26 @@ func (c *Controller) ConfirmAgreement(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, JSONResponse{
 		Success: true,
 		Message: "agreement confirmed successfully",
+		Data:    response,
+	})
+}
+
+func (c *Controller) DemoConfirmAgreement(w http.ResponseWriter, r *http.Request) {
+	userID, ok := currentUserID(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, ErrUnauthorized.Error())
+		return
+	}
+
+	response, err := c.service.DemoConfirmAgreement(r.Context(), userID, r.PathValue("id"), DemoConfirmAgreementRequest{})
+	if err != nil {
+		writeServiceError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, JSONResponse{
+		Success: true,
+		Message: "agreement demo-confirmed successfully",
 		Data:    response,
 	})
 }

@@ -15,6 +15,7 @@ import (
 	"garuda-hacks/backend/internal/ai"
 	"garuda-hacks/backend/internal/chat"
 	"garuda-hacks/backend/internal/document"
+	"garuda-hacks/backend/internal/matches"
 	"garuda-hacks/backend/notifications"
 	"garuda-hacks/backend/offer"
 	"garuda-hacks/backend/organizations"
@@ -273,6 +274,10 @@ func main() {
 		log.Fatalf("Failed to migrate chat schema: %v", err)
 	}
 
+	if err := matches.Migrate(db); err != nil {
+		log.Fatalf("Failed to migrate matches schema: %v", err)
+	}
+
 	if err := product.Migrate(db); err != nil {
 		log.Fatalf("Failed to migrate product schema: %v", err)
 	}
@@ -329,6 +334,7 @@ func main() {
 	users.RegisterRoutes(mux, usersHandler, authenticateMdw)
 	organizations.RegisterRoutes(mux, orgHandler, authenticateMdw, orgRepo)
 	agreement.RegisterRoutes(mux, db, authenticateMdw)
+	matches.RegisterRoutes(mux, db, authenticateMdw)
 	chat.RegisterRoutes(mux, db, authenticateMdw)
 	document.RegisterRoutes(mux, db, authenticateMdw)
 	ai.RegisterRoutes(mux, db, authenticateMdw)

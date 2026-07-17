@@ -13,7 +13,9 @@ type Repository interface {
 	FindMatchByID(ctx context.Context, matchID string) (*matchRecord, error)
 	CreateAgreement(ctx context.Context, agreement *Agreement) error
 	FindAgreementByID(ctx context.Context, id string) (*Agreement, error)
+	ListAgreementsForUser(ctx context.Context, userID string) ([]Agreement, error)
 	SaveAgreement(ctx context.Context, agreement *Agreement) error
+	SaveAgreementWithMatch(ctx context.Context, agreement *Agreement, match *matchRecord) error
 	ReplaceAgreementItems(ctx context.Context, agreement *Agreement, items []AgreementItem) error
 	ListAgreementItems(ctx context.Context, agreementID string) ([]AgreementItem, error)
 	CountAgreementItems(ctx context.Context, agreementID string) (int64, error)
@@ -83,9 +85,36 @@ func (r *GormRepository) FindAgreementByID(ctx context.Context, id string) (*Agr
 	return &agreement, nil
 }
 
+func (r *GormRepository) ListAgreementsForUser(ctx context.Context, userID string) ([]Agreement, error) {
+	var records []Agreement
+	err := r.db.WithContext(ctx).
+		Preload("Items", func(db *gorm.DB) *gorm.DB {
+			return db.Order("created_at ASC, id ASC")
+		}).
+		Joins("JOIN matches ON matches.id = agreements.match_id").
+		Where("matches.buyer_id = ? OR matches.producer_id = ?", userID, userID).
+		Order("agreements.updated_at DESC, agreements.created_at DESC").
+		Find(&records).Error
+	return records, err
+}
+
 // SaveAgreement persists agreement state changes.
 func (r *GormRepository) SaveAgreement(ctx context.Context, agreement *Agreement) error {
 	return r.db.WithContext(ctx).Save(agreement).Error
+}
+
+func (r *GormRepository) SaveAgreementWithMatch(ctx context.Context, agreement *Agreement, match *matchRecord) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Save(agreement).Error; err != nil {
+			return err
+		}
+		return tx.Table(match.TableName()).
+			Where("id = ?", match.ID).
+			Updates(map[string]interface{}{
+				"buyer_id":    match.BuyerID,
+				"producer_id": match.ProducerID,
+			}).Error
+	})
 }
 
 // ReplaceAgreementItems replaces all items for a draft agreement.

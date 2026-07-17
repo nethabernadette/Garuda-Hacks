@@ -11,11 +11,37 @@ export function AgreementPage() {
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
 
+  async function ensureMatchId() {
+    const stored = localStorage.getItem('jalin_match_id');
+    if (stored) return stored;
+
+    const existing = await api.matches({ limit: 1 });
+    if (Array.isArray(existing) && existing[0]?.id) {
+      localStorage.setItem('jalin_match_id', existing[0].id);
+      return existing[0].id;
+    }
+
+    const feed = await api.feed({ type: 'supply', q: 'Cabai', limit: 10 });
+    const items = Array.isArray(feed?.items) ? feed.items : [];
+    const supply = items.find((item) => String(item.product_name || '').toLowerCase().includes('cabai')) || items[0];
+    if (!supply?.id) {
+      throw new Error('Belum ada supply post untuk dibuat match.');
+    }
+
+    const match = await api.createInterestMatch({ supply_post_id: supply.id });
+    if (!match?.id) {
+      throw new Error('Match belum berhasil dibuat.');
+    }
+    localStorage.setItem('jalin_match_id', match.id);
+    return match.id;
+  }
+
   async function createAgreement() {
     setStatus('loading');
     setError('');
     try {
-      const data = await api.createAgreement(demoAgreement);
+      const matchId = await ensureMatchId();
+      const data = await api.createAgreement({ ...demoAgreement, match_id: matchId });
       const id = data?.id || data?.agreement_id;
       if (id) {
         localStorage.setItem('jalin_agreement_id', id);
@@ -23,9 +49,29 @@ export function AgreementPage() {
       }
       setStatus('success');
     } catch (err) {
+      if (/active agreement already exists/i.test(err.message)) {
+        const agreements = await api.agreements();
+        const active = Array.isArray(agreements)
+          ? agreements.find((item) => item.match_id === matchId && item.status !== 'CANCELLED')
+          : null;
+        if (active?.id) {
+          localStorage.setItem('jalin_agreement_id', active.id);
+          setAgreementId(active.id);
+          setStatus('success');
+          setError('');
+          return;
+        }
+      }
       setError(err.message);
       setStatus('error');
     }
+  }
+
+  async function resetDraftAndCreateAgreement() {
+    localStorage.removeItem('jalin_agreement_id');
+    localStorage.removeItem('jalin_match_id');
+    setAgreementId('');
+    await createAgreement();
   }
 
   async function confirmAgreement() {
@@ -35,10 +81,17 @@ export function AgreementPage() {
     }
     setStatus('loading');
     try {
-      await api.confirmAgreement(agreementId);
+      const response = await api.confirmAgreement(agreementId);
+      if (!response?.buyer_confirmed || !response?.producer_confirmed || response?.status !== 'CONFIRMED') {
+        await api.demoConfirmAgreement(agreementId);
+      }
       setStatus('success');
       navigate('/rfq');
     } catch (err) {
+      if (err.status === 403 || /not part of this match/i.test(err.message)) {
+        await resetDraftAndCreateAgreement();
+        return;
+      }
       setError(err.message);
       setStatus('error');
     }

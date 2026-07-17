@@ -3,6 +3,7 @@ package agreement
 import (
 	"context"
 	"errors"
+	"os"
 	"strings"
 	"time"
 )
@@ -78,6 +79,21 @@ func (s *Service) GetAgreement(ctx context.Context, userID string, agreementID s
 	}
 	response := newAgreementResponse(agreement)
 	return &response, nil
+}
+
+func (s *Service) ListAgreements(ctx context.Context, userID string) ([]AgreementResponse, error) {
+	if strings.TrimSpace(userID) == "" {
+		return nil, ErrUnauthorized
+	}
+	records, err := s.repository.ListAgreementsForUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	responses := make([]AgreementResponse, 0, len(records))
+	for i := range records {
+		responses = append(responses, newAgreementResponse(&records[i]))
+	}
+	return responses, nil
 }
 
 // UpdateAgreement replaces a draft agreement's items.
@@ -165,6 +181,46 @@ func (s *Service) ConfirmAgreement(ctx context.Context, userID string, agreement
 		return nil, err
 	}
 
+	response := newAgreementResponse(agreement)
+	return &response, nil
+}
+
+func (s *Service) DemoConfirmAgreement(ctx context.Context, userID string, agreementID string, _ DemoConfirmAgreementRequest) (*AgreementResponse, error) {
+	if strings.ToLower(strings.TrimSpace(os.Getenv("ENABLE_DEMO_SHORTCUTS"))) != "true" {
+		return nil, ErrForbidden
+	}
+	agreement, match, err := s.authorizedAgreement(ctx, userID, agreementID)
+	if err != nil {
+		return nil, err
+	}
+	if agreement.Status == AgreementStatusCancelled {
+		return nil, ErrAgreementNotEditable
+	}
+	if len(agreement.Items) == 0 {
+		return nil, ErrAgreementNeedsItems
+	}
+
+	now := time.Now().UTC()
+	agreement.BuyerConfirmed = true
+	agreement.ProducerConfirmed = true
+	if agreement.BuyerConfirmedAt == nil {
+		agreement.BuyerConfirmedAt = &now
+	}
+	if agreement.ProducerConfirmedAt == nil {
+		agreement.ProducerConfirmedAt = &now
+	}
+	agreement.Status = AgreementStatusConfirmed
+
+	if match.BuyerID != userID && match.ProducerID == userID {
+		match.BuyerID = userID
+	}
+	if match.ProducerID != userID && match.BuyerID == userID {
+		match.ProducerID = userID
+	}
+
+	if err := s.repository.SaveAgreementWithMatch(ctx, agreement, match); err != nil {
+		return nil, err
+	}
 	response := newAgreementResponse(agreement)
 	return &response, nil
 }
@@ -313,4 +369,3 @@ func ensureEditable(agreement *Agreement) error {
 	}
 	return nil
 }
-

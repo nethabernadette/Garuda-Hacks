@@ -79,9 +79,9 @@ func (s *Service) Recommendations(ctx context.Context, userID string) (*Recommen
 	}
 
 	payload := map[string]interface{}{
-		"user_profile":      publicUserProfile(user),
-		"search_history":    searchHistoryPayload(searches),
-		"agreement_history": agreementHistoryPayload(agreements),
+		"user_profile":        publicUserProfile(user),
+		"search_history":      searchHistoryPayload(searches),
+		"agreement_history":   agreementHistoryPayload(agreements),
 		"eligible_candidates": candidates,
 		"backend_aggregates":  buildAggregates(user, searches, agreements),
 	}
@@ -198,7 +198,7 @@ func (s *Service) VerifyAgreement(ctx context.Context, userID string, agreementI
 		"buyer_submission":    storedSubmission,
 		"producer_submission": storedSubmission,
 		"backend_comparison":  storedComparison,
-		"messages":             messagePayload(messages),
+		"messages":            messagePayload(messages),
 		"rules": map[string]interface{}{
 			"contact_reveal_requires_status":             "CONFIRMED",
 			"contact_reveal_requires_buyer_confirmed":    true,
@@ -224,20 +224,20 @@ func (s *Service) CompareAgreementSubmissions(ctx context.Context, userID string
 
 	deterministic := compareAgreementSubmissions(req.BuyerSubmission, req.ProducerSubmission)
 	payload := map[string]interface{}{
-		"agreement_id":        record.ID,
-		"match_id":             record.MatchID,
-		"buyer_submission":     normalizeSubmission(req.BuyerSubmission),
-		"producer_submission":  normalizeSubmission(req.ProducerSubmission),
-		"backend_comparison":   deterministic,
-		"buyer_final_confirm":  req.BuyerFinalConfirm,
+		"agreement_id":           record.ID,
+		"match_id":               record.MatchID,
+		"buyer_submission":       normalizeSubmission(req.BuyerSubmission),
+		"producer_submission":    normalizeSubmission(req.ProducerSubmission),
+		"backend_comparison":     deterministic,
+		"buyer_final_confirm":    req.BuyerFinalConfirm,
 		"producer_final_confirm": req.ProducerFinalConfirm,
 		"rules": map[string]interface{}{
-			"ai_may_only_recommend": true,
-			"backend_controls_unlock": true,
-			"buyer_is_party": match.BuyerID != "",
-			"producer_is_party": match.ProducerID != "",
-			"agreement_status": record.Status,
-			"stored_buyer_confirmed": record.BuyerConfirmed,
+			"ai_may_only_recommend":     true,
+			"backend_controls_unlock":   true,
+			"buyer_is_party":            match.BuyerID != "",
+			"producer_is_party":         match.ProducerID != "",
+			"agreement_status":          record.Status,
+			"stored_buyer_confirmed":    record.BuyerConfirmed,
 			"stored_producer_confirmed": record.ProducerConfirmed,
 		},
 	}
@@ -272,9 +272,9 @@ func (s *Service) SummarizeNegotiation(ctx context.Context, userID string, agree
 	}
 	payload := map[string]interface{}{
 		"agreement_id": record.ID,
-		"match_id": record.MatchID,
-		"messages": messagePayload(messages),
-		"limit": messageLimit,
+		"match_id":     record.MatchID,
+		"messages":     messagePayload(messages),
+		"limit":        messageLimit,
 	}
 	response := fallbackNegotiationSummary(record, messages)
 	if s.groq != nil {
@@ -382,16 +382,16 @@ func publicUserProfile(user *users.User) map[string]interface{} {
 	profile := map[string]interface{}{}
 	if user.Profile != nil {
 		profile = map[string]interface{}{
-			"company_name":        user.Profile.CompanyName,
-			"city":                user.Profile.City,
-			"business_type":       user.Profile.BusinessType,
-			"product_category":    user.Profile.ProductCategory,
-			"capacity":            user.Profile.Capacity,
-			"moq":                 user.Profile.MOQ,
-			"certifications":      user.Profile.Certifications,
-			"delivery_area":       user.Profile.DeliveryArea,
-			"availability":        user.Profile.Availability,
-			"purchase_frequency":  user.Profile.PurchaseFrequency,
+			"company_name":       user.Profile.CompanyName,
+			"city":               user.Profile.City,
+			"business_type":      user.Profile.BusinessType,
+			"product_category":   user.Profile.ProductCategory,
+			"capacity":           user.Profile.Capacity,
+			"moq":                user.Profile.MOQ,
+			"certifications":     user.Profile.Certifications,
+			"delivery_area":      user.Profile.DeliveryArea,
+			"availability":       user.Profile.Availability,
+			"purchase_frequency": user.Profile.PurchaseFrequency,
 		}
 	}
 	return map[string]interface{}{
@@ -503,21 +503,21 @@ func supplyPostPayload(record posts.SupplyPost) map[string]interface{} {
 
 func demandPostPayload(record posts.DemandPost) map[string]interface{} {
 	return map[string]interface{}{
-		"entity_id":                 record.ID,
-		"entity_type":               "demand_post",
-		"buyer_id":                  record.BuyerID,
-		"product_name":              record.ProductName,
-		"category":                  record.Category,
-		"subcategory":               record.Subcategory,
-		"quantity":                  record.Quantity,
-		"unit":                      record.Unit,
-		"budget_min":                record.BudgetMin,
-		"budget_max":                record.BudgetMax,
-		"delivery_location":         record.DeliveryLocation,
-		"needed_date":               record.NeededDate,
-		"frequency":                 record.Frequency,
-		"additional_requirements":   record.AdditionalRequirements,
-		"created_at":                record.CreatedAt,
+		"entity_id":               record.ID,
+		"entity_type":             "demand_post",
+		"buyer_id":                record.BuyerID,
+		"product_name":            record.ProductName,
+		"category":                record.Category,
+		"subcategory":             record.Subcategory,
+		"quantity":                record.Quantity,
+		"unit":                    record.Unit,
+		"budget_min":              record.BudgetMin,
+		"budget_max":              record.BudgetMax,
+		"delivery_location":       record.DeliveryLocation,
+		"needed_date":             record.NeededDate,
+		"frequency":               record.Frequency,
+		"additional_requirements": record.AdditionalRequirements,
+		"created_at":              record.CreatedAt,
 	}
 }
 
@@ -577,18 +577,18 @@ func candidateIDSet(candidates []map[string]interface{}) map[string]struct{} {
 }
 
 type matchEvaluation struct {
-	PartnerID                   string
-	EntityID                    string
-	EntityType                  string
-	Score                       int
-	Status                      string
-	MatchedFields               []string
-	MissingOrConflictingReqs     []string
-	Reasoning                   []string
-	SuggestedAction             string
-	DistanceKM                  *float64
-	CriticalConstraintFailed    bool
-	PublicData                  map[string]interface{}
+	PartnerID                string
+	EntityID                 string
+	EntityType               string
+	Score                    int
+	Status                   string
+	MatchedFields            []string
+	MissingOrConflictingReqs []string
+	Reasoning                []string
+	SuggestedAction          string
+	DistanceKM               *float64
+	CriticalConstraintFailed bool
+	PublicData               map[string]interface{}
 }
 
 func (s *Service) evaluateSupplyCandidates(ctx context.Context, demand posts.DemandPost, buyer *users.User, supplies []posts.SupplyPost) ([]matchEvaluation, error) {
@@ -954,16 +954,16 @@ func fallbackMatchmaking(sourceID string, sourceType string, evaluations []match
 			continue
 		}
 		matches = append(matches, MatchCandidate{
-			PartnerID:                   evaluation.PartnerID,
-			EntityID:                    evaluation.EntityID,
-			EntityType:                  evaluation.EntityType,
-			CompatibilityScore:          evaluation.Score,
-			MatchStatus:                 evaluation.Status,
-			MatchedFields:               evaluation.MatchedFields,
-			MissingOrConflictingReqs:     evaluation.MissingOrConflictingReqs,
-			Reasoning:                   evaluation.Reasoning,
-			SuggestedAction:             evaluation.SuggestedAction,
-			PublicData:                  evaluation.PublicData,
+			PartnerID:                evaluation.PartnerID,
+			EntityID:                 evaluation.EntityID,
+			EntityType:               evaluation.EntityType,
+			CompatibilityScore:       evaluation.Score,
+			MatchStatus:              evaluation.Status,
+			MatchedFields:            evaluation.MatchedFields,
+			MissingOrConflictingReqs: evaluation.MissingOrConflictingReqs,
+			Reasoning:                evaluation.Reasoning,
+			SuggestedAction:          evaluation.SuggestedAction,
+			PublicData:               evaluation.PublicData,
 		})
 	}
 	response := MatchmakingResponse{
@@ -1191,11 +1191,11 @@ func fallbackNegotiationSummary(record *agreement.Agreement, messages []chat.Mes
 		agreed = append(agreed, "Stored agreement item: "+draft.Product)
 	}
 	return NegotiationSummaryResponse{
-		AgreementDraft: draft,
-		AgreedTerms:    agreed,
+		AgreementDraft:  draft,
+		AgreedTerms:     agreed,
 		UnresolvedTerms: []string{},
-		Evidence:       []NegotiationEvidence{},
-		Summary:        summary,
+		Evidence:        []NegotiationEvidence{},
+		Summary:         summary,
 	}
 }
 
