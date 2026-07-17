@@ -70,15 +70,17 @@ type ConfirmAgreementRequest struct{}
 
 // AgreementResponse is returned by agreement endpoints.
 type AgreementResponse struct {
-	ID                string                  `json:"id"`
-	MatchID           string                  `json:"match_id"`
-	CreatedBy         string                  `json:"created_by"`
-	Status            AgreementStatus         `json:"status"`
-	BuyerConfirmed    bool                    `json:"buyer_confirmed"`
-	ProducerConfirmed bool                    `json:"producer_confirmed"`
-	Items             []AgreementItemResponse `json:"items,omitempty"`
-	CreatedAt         time.Time               `json:"created_at"`
-	UpdatedAt         time.Time               `json:"updated_at"`
+	ID                  string                  `json:"id"`
+	MatchID             string                  `json:"match_id"`
+	CreatedBy           string                  `json:"created_by"`
+	Status              AgreementStatus         `json:"status"`
+	BuyerConfirmed      bool                    `json:"buyer_confirmed"`
+	ProducerConfirmed   bool                    `json:"producer_confirmed"`
+	BuyerConfirmedAt    *time.Time              `json:"buyer_confirmed_at,omitempty"`
+	ProducerConfirmedAt *time.Time              `json:"producer_confirmed_at,omitempty"`
+	Items               []AgreementItemResponse `json:"items,omitempty"`
+	CreatedAt           time.Time               `json:"created_at"`
+	UpdatedAt           time.Time               `json:"updated_at"`
 }
 
 // AgreementItemResponse is returned for agreement item endpoints.
@@ -99,24 +101,6 @@ type AgreementItemResponse struct {
 	UpdatedAt       time.Time `json:"updated_at"`
 }
 
-// ContactResponse is returned after an agreement has been confirmed.
-type ContactResponse struct {
-	AgreementID string               `json:"agreement_id"`
-	MatchID     string               `json:"match_id"`
-	Buyer       ContactPartyResponse `json:"buyer"`
-	Producer    ContactPartyResponse `json:"producer"`
-}
-
-// ContactPartyResponse exposes confirmed post-agreement contact information.
-type ContactPartyResponse struct {
-	UserID          string `json:"user_id"`
-	CompanyName     string `json:"company_name"`
-	PhoneNumber     string `json:"phone_number"`
-	Email           string `json:"email"`
-	Website         string `json:"website,omitempty"`
-	BusinessAddress string `json:"business_address,omitempty"`
-}
-
 // JSONResponse matches the response envelope used by existing modules.
 type JSONResponse struct {
 	Success bool        `json:"success"`
@@ -127,15 +111,17 @@ type JSONResponse struct {
 
 func newAgreementResponse(agreement *Agreement) AgreementResponse {
 	return AgreementResponse{
-		ID:                agreement.ID,
-		MatchID:           agreement.MatchID,
-		CreatedBy:         agreement.CreatedBy,
-		Status:            agreement.Status,
-		BuyerConfirmed:    agreement.BuyerConfirmed,
-		ProducerConfirmed: agreement.ProducerConfirmed,
-		Items:             newAgreementItemResponses(agreement.Items),
-		CreatedAt:         agreement.CreatedAt,
-		UpdatedAt:         agreement.UpdatedAt,
+		ID:                  agreement.ID,
+		MatchID:             agreement.MatchID,
+		CreatedBy:           agreement.CreatedBy,
+		Status:              agreement.Status,
+		BuyerConfirmed:      agreement.BuyerConfirmed,
+		ProducerConfirmed:   agreement.ProducerConfirmed,
+		BuyerConfirmedAt:    agreement.BuyerConfirmedAt,
+		ProducerConfirmedAt: agreement.ProducerConfirmedAt,
+		Items:               newAgreementItemResponses(agreement.Items),
+		CreatedAt:           agreement.CreatedAt,
+		UpdatedAt:           agreement.UpdatedAt,
 	}
 }
 

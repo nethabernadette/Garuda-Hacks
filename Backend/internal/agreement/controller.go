@@ -222,23 +222,6 @@ func (c *Controller) DeleteItem(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetContact handles GET /agreements/{id}/contact.
-func (c *Controller) GetContact(w http.ResponseWriter, r *http.Request) {
-	userID, ok := currentUserID(r)
-	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrUnauthorized.Error())
-		return
-	}
-
-	response, err := c.service.GetContact(r.Context(), userID, r.PathValue("id"))
-	if err != nil {
-		writeServiceError(w, err)
-		return
-	}
-
-	writeJSON(w, http.StatusOK, JSONResponse{Success: true, Data: response})
-}
-
 func currentUserID(r *http.Request) (string, bool) {
 	claims, ok := auth.ClaimsFromContext(r.Context())
 	if !ok || claims.UserID == "" {

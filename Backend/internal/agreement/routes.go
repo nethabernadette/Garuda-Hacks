@@ -21,7 +21,6 @@ func RegisterRoutes(mux *http.ServeMux, db *gorm.DB, authenticate func(http.Hand
 	mux.Handle("POST /agreements/{id}/items", authenticate(http.HandlerFunc(controller.AddItem)))
 	mux.Handle("PUT /agreements/{id}/items/{itemId}", authenticate(http.HandlerFunc(controller.UpdateItem)))
 	mux.Handle("DELETE /agreements/{id}/items/{itemId}", authenticate(http.HandlerFunc(controller.DeleteItem)))
-	mux.Handle("GET /agreements/{id}/contact", authenticate(http.HandlerFunc(controller.GetContact)))
 }
 
 // Migrate runs GORM migrations for agreement tables only.

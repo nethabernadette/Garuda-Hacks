@@ -19,17 +19,19 @@ const (
 
 // Agreement stores the procurement agreement created from a successful match.
 type Agreement struct {
-	ID                string          `gorm:"column:id;type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
-	MatchID           string          `gorm:"column:match_id;type:uuid;not null;index" json:"match_id"`
-	CreatedBy         string          `gorm:"column:created_by;type:uuid;not null;index" json:"created_by"`
-	Status            AgreementStatus `gorm:"column:status;type:varchar(20);not null;default:'DRAFT';index" json:"status"`
-	BuyerConfirmed    bool            `gorm:"column:buyer_confirmed;not null;default:false" json:"buyer_confirmed"`
-	ProducerConfirmed bool            `gorm:"column:producer_confirmed;not null;default:false" json:"producer_confirmed"`
-	Items             []AgreementItem `gorm:"foreignKey:AgreementID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"items,omitempty"`
-	Creator           users.User      `gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT" json:"-"`
-	CreatedAt         time.Time       `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
-	UpdatedAt         time.Time       `gorm:"column:updated_at;not null;autoUpdateTime" json:"updated_at"`
-	DeletedAt         gorm.DeletedAt  `gorm:"column:deleted_at;index" json:"-"`
+	ID                  string          `gorm:"column:id;type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	MatchID             string          `gorm:"column:match_id;type:uuid;not null;index" json:"match_id"`
+	CreatedBy           string          `gorm:"column:created_by;type:uuid;not null;index" json:"created_by"`
+	Status              AgreementStatus `gorm:"column:status;type:varchar(20);not null;default:'DRAFT';index" json:"status"`
+	BuyerConfirmed      bool            `gorm:"column:buyer_confirmed;not null;default:false" json:"buyer_confirmed"`
+	ProducerConfirmed   bool            `gorm:"column:producer_confirmed;not null;default:false" json:"producer_confirmed"`
+	BuyerConfirmedAt    *time.Time      `gorm:"column:buyer_confirmed_at" json:"buyer_confirmed_at,omitempty"`
+	ProducerConfirmedAt *time.Time      `gorm:"column:producer_confirmed_at" json:"producer_confirmed_at,omitempty"`
+	Items               []AgreementItem `gorm:"foreignKey:AgreementID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"items,omitempty"`
+	Creator             users.User      `gorm:"foreignKey:CreatedBy;references:ID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT" json:"-"`
+	CreatedAt           time.Time       `gorm:"column:created_at;not null;autoCreateTime" json:"created_at"`
+	UpdatedAt           time.Time       `gorm:"column:updated_at;not null;autoUpdateTime" json:"updated_at"`
+	DeletedAt           gorm.DeletedAt  `gorm:"column:deleted_at;index" json:"-"`
 }
 
 // TableName returns the database table name for agreements.

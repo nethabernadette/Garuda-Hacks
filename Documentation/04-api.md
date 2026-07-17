@@ -149,6 +149,8 @@ The backend creates deduplicated notifications when a new active supply post or 
 New GORM migrations:
 - `posts.Migrate(db)` creates `supply_posts` and `demand_posts`, with owner/status/category/location/date indexes and PostgreSQL foreign keys to `users`.
 - `notifications.Migrate(db)` creates `notifications`, with user/read/reference indexes and a uniqueness constraint for duplicate prevention.
+- `agreement.Migrate(db)` now also keeps `buyer_confirmed_at` and `producer_confirmed_at` on `agreements`.
+- `document.RegisterRoutes(mux, db, authenticate)` registers RFQ/procurement summary and contact reveal endpoints. It does not create a separate document table.
 
 Typical backend commands:
 
@@ -170,5 +172,107 @@ POST /chat/:id/message
 POST /agreement
 GET /agreement/:id
 POST /agreement/:id/confirm
+
+## Agreement Documents and Contact Reveal
+
+These endpoints are available only after an agreement has been confirmed by both parties.
+
+Required agreement state:
+- `status == CONFIRMED`
+- `buyer_confirmed == true`
+- `producer_confirmed == true`
+
+If the authenticated user is not part of the agreement match, the API returns `403 Forbidden`.
+
+If the agreement exists but has not been fully confirmed, the API returns `409 Conflict`.
+
+### Procurement Summary
+
+GET /agreements/:id/document
+
+Returns a generated RFQ/procurement summary response. This is a pre-transaction document, not an invoice, payment receipt, or shipping document.
+
+Response data:
+
+```json
+{
+  "document_number": "RFQ-2026-000001",
+  "agreement_id": "uuid",
+  "generated_date": "2026-07-17T10:00:00Z",
+  "summary": {
+    "document_number": "RFQ-2026-000001",
+    "agreement_id": "uuid",
+    "producer_company": "Producer Co",
+    "buyer_company": "Buyer Co",
+    "product_list": [
+      {
+        "product_name": "Rice",
+        "quantity": 100,
+        "unit": "kg",
+        "unit_price": 5000,
+        "currency": "IDR",
+        "total_value": 500000,
+        "specifications": "Food grade",
+        "delivery_date": "2026-07-20T00:00:00Z",
+        "delivery_address": "Jakarta",
+        "payment_terms": "Net 14"
+      }
+    ],
+    "total_value": 500000,
+    "currency": "IDR",
+    "delivery_address": "Jakarta",
+    "payment_terms": "Net 14",
+    "agreement_status": "CONFIRMED",
+    "producer_confirmation_timestamp": "2026-07-10T10:00:00Z",
+    "buyer_confirmation_timestamp": "2026-07-10T09:00:00Z"
+  },
+  "html": "<!doctype html>..."
+}
+```
+
+GET /agreements/:id/document/html
+
+Returns printable semantic HTML with `Content-Type: text/html; charset=utf-8`.
+
+Document number format:
+- `RFQ-{year}-{sequence}`
+- Example: `RFQ-2026-000001`
+
+The sequence is generated in the service layer from agreement creation order within the same year.
+
+### Contact Reveal
+
+GET /agreements/:id/contact
+
+Returns company contact information for both parties only after full agreement confirmation.
+
+Response data:
+
+```json
+{
+  "agreement_id": "uuid",
+  "match_id": "uuid",
+  "buyer": {
+    "user_id": "uuid",
+    "company_name": "Buyer Co",
+    "business_address": "Jakarta",
+    "email": "buyer@example.com",
+    "phone_number": "+621",
+    "website": "",
+    "business_representative": "Buyer Co"
+  },
+  "producer": {
+    "user_id": "uuid",
+    "company_name": "Producer Co",
+    "business_address": "West Java",
+    "email": "producer@example.com",
+    "phone_number": "+622",
+    "website": "",
+    "business_representative": "Producer Co"
+  }
+}
+```
+
+The backend reuses existing `users` and `user_profiles` records for contact data. There is no duplicated company contact table.
 
 GET /documents/:id

@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
-
-	"garuda-hacks/backend/users"
+	"time"
 )
 
 var (
@@ -97,6 +96,8 @@ func (s *Service) UpdateAgreement(ctx context.Context, userID string, agreementI
 	items := agreementItemsFromRequests(req.Items)
 	agreement.BuyerConfirmed = false
 	agreement.ProducerConfirmed = false
+	agreement.BuyerConfirmedAt = nil
+	agreement.ProducerConfirmedAt = nil
 	agreement.Status = AgreementStatusDraft
 	if err := s.repository.ReplaceAgreementItems(ctx, agreement, items); err != nil {
 		return nil, err
@@ -140,11 +141,18 @@ func (s *Service) ConfirmAgreement(ctx context.Context, userID string, agreement
 		return nil, ErrAgreementNeedsItems
 	}
 
+	now := time.Now().UTC()
 	if userID == match.BuyerID {
 		agreement.BuyerConfirmed = true
+		if agreement.BuyerConfirmedAt == nil {
+			agreement.BuyerConfirmedAt = &now
+		}
 	}
 	if userID == match.ProducerID {
 		agreement.ProducerConfirmed = true
+		if agreement.ProducerConfirmedAt == nil {
+			agreement.ProducerConfirmedAt = &now
+		}
 	}
 
 	if agreement.BuyerConfirmed && agreement.ProducerConfirmed {
@@ -265,33 +273,6 @@ func (s *Service) DeleteItem(ctx context.Context, userID string, agreementID str
 	return s.repository.DeleteAgreementItem(ctx, item)
 }
 
-// GetContact returns both parties' contact information for confirmed agreements.
-func (s *Service) GetContact(ctx context.Context, userID string, agreementID string) (*ContactResponse, error) {
-	agreement, match, err := s.authorizedAgreement(ctx, userID, agreementID)
-	if err != nil {
-		return nil, err
-	}
-	if agreement.Status != AgreementStatusConfirmed {
-		return nil, ErrContactHidden
-	}
-
-	buyer, err := s.repository.FindUserContactByID(ctx, match.BuyerID)
-	if err != nil {
-		return nil, err
-	}
-	producer, err := s.repository.FindUserContactByID(ctx, match.ProducerID)
-	if err != nil {
-		return nil, err
-	}
-
-	return &ContactResponse{
-		AgreementID: agreement.ID,
-		MatchID:     agreement.MatchID,
-		Buyer:       contactFromUser(buyer),
-		Producer:    contactFromUser(producer),
-	}, nil
-}
-
 func (s *Service) authorizedAgreement(ctx context.Context, userID string, agreementID string) (*Agreement, *matchRecord, error) {
 	if strings.TrimSpace(userID) == "" {
 		return nil, nil, ErrUnauthorized
@@ -333,18 +314,3 @@ func ensureEditable(agreement *Agreement) error {
 	return nil
 }
 
-func contactFromUser(user *users.User) ContactPartyResponse {
-	response := ContactPartyResponse{
-		UserID: user.ID,
-		Email:  user.Email,
-	}
-	if user.Profile != nil {
-		response.CompanyName = user.Profile.CompanyName
-		response.PhoneNumber = user.Profile.Phone
-		response.BusinessAddress = user.Profile.DeliveryArea
-		if response.BusinessAddress == "" {
-			response.BusinessAddress = user.Profile.City
-		}
-	}
-	return response
-}
