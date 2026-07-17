@@ -21,7 +21,7 @@ type TokenManager struct {
 }
 
 type Claims struct {
-	UserID uint           `json:"user_id"`
+	UserID string         `json:"user_id"`
 	Email  string         `json:"email"`
 	Role   users.UserRole `json:"role"`
 	jwt.RegisteredClaims
@@ -64,7 +64,7 @@ func (m *TokenManager) GenerateAccessToken(user *users.User) (string, error) {
 		Role:   user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    jwtIssuer,
-			Subject:   strconv.FormatUint(uint64(user.ID), 10),
+			Subject:   user.ID,
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(m.accessTokenTTL)),
 		},

@@ -17,7 +17,7 @@ type LoginRequest struct {
 }
 
 type UserResponse struct {
-	ID          uint           `json:"id"`
+	ID          string         `json:"id"`
 	Role        users.UserRole `json:"role"`
 	CompanyName string         `json:"company_name"`
 	Email       string         `json:"email"`
@@ -43,12 +43,17 @@ type JSONResponse struct {
 }
 
 func NewUserResponse(user *users.User) UserResponse {
+	var profile users.UserProfile
+	if user.Profile != nil {
+		profile = *user.Profile
+	}
+
 	return UserResponse{
 		ID:          user.ID,
 		Role:        user.Role,
-		CompanyName: user.CompanyName,
+		CompanyName: profile.CompanyName,
 		Email:       user.Email,
-		Phone:       user.Phone,
-		City:        user.City,
+		Phone:       profile.Phone,
+		City:        profile.City,
 	}
 }

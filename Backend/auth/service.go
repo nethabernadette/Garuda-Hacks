@@ -43,11 +43,13 @@ func (s *Service) Register(ctx context.Context, req RegisterRequest) (*RegisterR
 
 	user := &users.User{
 		Role:         req.Role,
-		CompanyName:  req.CompanyName,
 		Email:        req.Email,
 		PasswordHash: string(passwordHash),
-		Phone:        req.Phone,
-		City:         req.City,
+		Profile: &users.UserProfile{
+			CompanyName: req.CompanyName,
+			Phone:       req.Phone,
+			City:        req.City,
+		},
 	}
 
 	if err := s.users.Create(ctx, user); err != nil {

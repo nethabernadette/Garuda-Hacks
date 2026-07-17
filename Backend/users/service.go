@@ -14,7 +14,7 @@ func NewService(repository Repository) *Service {
 }
 
 func (s *Service) GetCurrentProfile(ctx context.Context, principal Principal) (*ProfileResponse, error) {
-	if principal.UserID == 0 {
+	if principal.UserID == "" {
 		return nil, ErrUnauthorized
 	}
 
@@ -27,11 +27,11 @@ func (s *Service) GetCurrentProfile(ctx context.Context, principal Principal) (*
 	return &response, nil
 }
 
-func (s *Service) GetUserByID(ctx context.Context, principal Principal, id uint) (*ProfileResponse, error) {
-	if principal.UserID == 0 {
+func (s *Service) GetUserByID(ctx context.Context, principal Principal, id string) (*ProfileResponse, error) {
+	if principal.UserID == "" {
 		return nil, ErrUnauthorized
 	}
-	if id == 0 {
+	if id == "" {
 		return nil, ErrInvalidUserID
 	}
 	if principal.Role != RoleAdmin && principal.UserID != id {
@@ -48,7 +48,7 @@ func (s *Service) GetUserByID(ctx context.Context, principal Principal, id uint)
 }
 
 func (s *Service) ListUsers(ctx context.Context, principal Principal) ([]ProfileResponse, error) {
-	if principal.UserID == 0 {
+	if principal.UserID == "" {
 		return nil, ErrUnauthorized
 	}
 	if principal.Role != RoleAdmin {
@@ -64,18 +64,18 @@ func (s *Service) ListUsers(ctx context.Context, principal Principal) ([]Profile
 }
 
 func (s *Service) UpdateCurrentProfile(ctx context.Context, principal Principal, req UpdateProfileRequest) (*ProfileResponse, error) {
-	if principal.UserID == 0 {
+	if principal.UserID == "" {
 		return nil, ErrUnauthorized
 	}
 
 	return s.UpdateProfile(ctx, principal, principal.UserID, req)
 }
 
-func (s *Service) UpdateProfile(ctx context.Context, principal Principal, id uint, req UpdateProfileRequest) (*ProfileResponse, error) {
-	if principal.UserID == 0 {
+func (s *Service) UpdateProfile(ctx context.Context, principal Principal, id string, req UpdateProfileRequest) (*ProfileResponse, error) {
+	if principal.UserID == "" {
 		return nil, ErrUnauthorized
 	}
-	if id == 0 {
+	if id == "" {
 		return nil, ErrInvalidUserID
 	}
 	if principal.Role != RoleAdmin && principal.UserID != id {
@@ -100,12 +100,16 @@ func (s *Service) UpdateProfile(ctx context.Context, principal Principal, id uin
 }
 
 func applyProfileUpdates(user *User, req UpdateProfileRequest) error {
+	if user.Profile == nil {
+		user.Profile = &UserProfile{UserID: user.ID}
+	}
+
 	if req.CompanyName != nil {
 		value := strings.TrimSpace(*req.CompanyName)
 		if value == "" {
 			return ErrRequiredCompanyName
 		}
-		user.CompanyName = value
+		user.Profile.CompanyName = value
 	}
 
 	if req.Phone != nil {
@@ -113,7 +117,7 @@ func applyProfileUpdates(user *User, req UpdateProfileRequest) error {
 		if value == "" {
 			return ErrRequiredPhone
 		}
-		user.Phone = value
+		user.Profile.Phone = value
 	}
 
 	if req.City != nil {
@@ -121,7 +125,7 @@ func applyProfileUpdates(user *User, req UpdateProfileRequest) error {
 		if value == "" {
 			return ErrRequiredCity
 		}
-		user.City = value
+		user.Profile.City = value
 	}
 
 	return nil

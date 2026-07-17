@@ -1,12 +1,12 @@
 package users
 
 type Principal struct {
-	UserID uint
+	UserID string
 	Role   UserRole
 }
 
 type ProfileResponse struct {
-	ID          uint     `json:"id"`
+	ID          string   `json:"id"`
 	Role        UserRole `json:"role"`
 	CompanyName string   `json:"company_name"`
 	Email       string   `json:"email"`
@@ -28,13 +28,18 @@ type JSONResponse struct {
 }
 
 func NewProfileResponse(user *User) ProfileResponse {
+	var profile UserProfile
+	if user.Profile != nil {
+		profile = *user.Profile
+	}
+
 	return ProfileResponse{
 		ID:          user.ID,
 		Role:        user.Role,
-		CompanyName: user.CompanyName,
+		CompanyName: profile.CompanyName,
 		Email:       user.Email,
-		Phone:       user.Phone,
-		City:        user.City,
+		Phone:       profile.Phone,
+		City:        profile.City,
 	}
 }
 

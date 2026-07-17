@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -177,7 +176,7 @@ func (h *Handler) principalFromRequest(r *http.Request) (Principal, bool) {
 	return h.extractClaims(r.Context())
 }
 
-func userIDFromRequest(r *http.Request) (uint, error) {
+func userIDFromRequest(r *http.Request) (string, error) {
 	rawID := strings.TrimSpace(r.URL.Query().Get("id"))
 	if rawID == "" {
 		rawID = strings.Trim(strings.TrimPrefix(r.URL.Path, "/"), "/")
@@ -187,12 +186,11 @@ func userIDFromRequest(r *http.Request) (uint, error) {
 		}
 	}
 
-	parsedID, err := strconv.ParseUint(rawID, 10, 64)
-	if err != nil || parsedID == 0 {
-		return 0, ErrInvalidUserID
+	if rawID == "" {
+		return "", ErrInvalidUserID
 	}
 
-	return uint(parsedID), nil
+	return rawID, nil
 }
 
 func writeServiceError(w http.ResponseWriter, err error) {
