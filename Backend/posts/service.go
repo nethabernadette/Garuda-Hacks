@@ -2,6 +2,7 @@ package posts
 
 import (
 	"context"
+	"garuda-hacks/backend/users"
 	"sort"
 	"strings"
 )

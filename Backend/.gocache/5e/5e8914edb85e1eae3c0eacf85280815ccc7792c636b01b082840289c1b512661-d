@@ -1,0 +1,9 @@
+./controller.go
+./dto.go
+./migration.go
+./model.go
+./repository.go
+./routes.go
+./service.go
+./validation.go
+./service_test.go

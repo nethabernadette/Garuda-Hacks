@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_PORT = import.meta.env.VITE_API_PORT || '8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || `http://localhost:${API_PORT}`;
 const TOKEN_KEY = 'jalin_access_token';
 
 export function getToken() {
