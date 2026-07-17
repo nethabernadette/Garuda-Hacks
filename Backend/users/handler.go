@@ -155,7 +155,7 @@ func (h *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := h.service.UpdateProfile(r.Context(), principal, id, req)
+	response, err := h.service.UpdateProfile(r.Context(), principal, id, req, false)
 	if err != nil {
 		writeServiceError(w, err)
 		return
@@ -164,6 +164,122 @@ func (h *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, JSONResponse{
 		Success: true,
 		Message: "profile updated successfully",
+		Data:    response,
+	})
+}
+
+func (h *Handler) GetCurrentVerification(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	principal, ok := h.principalFromRequest(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, ErrUnauthorized.Error())
+		return
+	}
+
+	response, err := h.service.GetCurrentVerification(r.Context(), principal)
+	if err != nil {
+		writeServiceError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, JSONResponse{
+		Success: true,
+		Data:    response,
+	})
+}
+
+func (h *Handler) SubmitCurrentVerification(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	principal, ok := h.principalFromRequest(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, ErrUnauthorized.Error())
+		return
+	}
+
+	var req NIBVerificationRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, ErrInvalidRequest.Error())
+		return
+	}
+
+	response, err := h.service.SubmitCurrentVerification(r.Context(), principal, req)
+	if err != nil {
+		writeServiceError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, JSONResponse{
+		Success: true,
+		Message: "verification submitted successfully",
+		Data:    response,
+	})
+}
+
+func (h *Handler) ListVerifications(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	principal, ok := h.principalFromRequest(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, ErrUnauthorized.Error())
+		return
+	}
+
+	response, err := h.service.ListVerifications(r.Context(), principal)
+	if err != nil {
+		writeServiceError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, JSONResponse{
+		Success: true,
+		Data:    response,
+	})
+}
+
+func (h *Handler) ReviewVerification(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost && r.Method != http.MethodPut && r.Method != http.MethodPatch {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	principal, ok := h.principalFromRequest(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, ErrUnauthorized.Error())
+		return
+	}
+
+	id, err := userIDFromRequest(r)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, ErrInvalidRequest.Error())
+		return
+	}
+
+	var req ReviewNIBVerificationRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, ErrInvalidRequest.Error())
+		return
+	}
+
+	response, err := h.service.ReviewVerification(r.Context(), principal, id, req)
+	if err != nil {
+		writeServiceError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, JSONResponse{
+		Success: true,
+		Message: "verification reviewed successfully",
 		Data:    response,
 	})
 }
@@ -199,13 +315,18 @@ func writeServiceError(w http.ResponseWriter, err error) {
 		writeError(w, http.StatusUnauthorized, err.Error())
 	case errors.Is(err, ErrForbidden):
 		writeError(w, http.StatusForbidden, err.Error())
-	case errors.Is(err, ErrUserNotFound):
+	case errors.Is(err, ErrUserNotFound),
+		errors.Is(err, ErrVerificationNotFound):
 		writeError(w, http.StatusNotFound, err.Error())
 	case errors.Is(err, ErrInvalidUserID),
 		errors.Is(err, ErrInvalidRequest),
 		errors.Is(err, ErrRequiredCompanyName),
 		errors.Is(err, ErrRequiredPhone),
-		errors.Is(err, ErrRequiredCity):
+		errors.Is(err, ErrRequiredCity),
+		errors.Is(err, ErrRequiredNIBNumber),
+		errors.Is(err, ErrInvalidNIBNumber),
+		errors.Is(err, ErrInvalidVerificationStatus),
+		errors.Is(err, ErrRequiredRejectionReason):
 		writeError(w, http.StatusBadRequest, err.Error())
 	default:
 		writeError(w, http.StatusInternalServerError, "internal server error")

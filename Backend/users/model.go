@@ -12,6 +12,7 @@ const (
 	RoleBuyer    UserRole = "BUYER"
 	RoleProducer UserRole = "PRODUCER"
 	RoleAdmin    UserRole = "ADMIN"
+	RoleFarmer   UserRole = "FARMER"
 )
 
 type NIBVerificationStatus string
@@ -64,6 +65,7 @@ func (UserProfile) TableName() string {
 type NIBVerification struct {
 	ID              string                `gorm:"column:id;type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	UserID          string                `gorm:"column:user_id;type:uuid;not null;uniqueIndex" json:"user_id"`
+	OrganizationID  *string               `gorm:"column:organization_id;type:uuid;index" json:"organization_id,omitempty"`
 	NIBNumber       string                `gorm:"column:nib_number;type:varchar(64);not null;uniqueIndex" json:"nib_number"`
 	Status          NIBVerificationStatus `gorm:"column:status;type:varchar(20);not null;default:'PENDING';index" json:"status"`
 	VerifiedAt      *time.Time            `gorm:"column:verified_at" json:"verified_at,omitempty"`
@@ -80,7 +82,7 @@ func (NIBVerification) TableName() string {
 
 func (r UserRole) IsValid() bool {
 	switch r {
-	case RoleBuyer, RoleProducer, RoleAdmin:
+	case RoleBuyer, RoleProducer, RoleAdmin, RoleFarmer:
 		return true
 	default:
 		return false

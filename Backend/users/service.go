@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"strings"
+	"time"
 )
 
 type Service struct {
@@ -68,10 +69,18 @@ func (s *Service) UpdateCurrentProfile(ctx context.Context, principal Principal,
 		return nil, ErrUnauthorized
 	}
 
-	return s.UpdateProfile(ctx, principal, principal.UserID, req)
+	return s.UpdateProfile(ctx, principal, principal.UserID, req, false)
 }
 
-func (s *Service) UpdateProfile(ctx context.Context, principal Principal, id string, req UpdateProfileRequest) (*ProfileResponse, error) {
+func (s *Service) UploadCurrentProfile(ctx context.Context, principal Principal, req UpdateProfileRequest) (*ProfileResponse, error) {
+	if principal.UserID == "" {
+		return nil, ErrUnauthorized
+	}
+
+	return s.UpdateProfile(ctx, principal, principal.UserID, req, true)
+}
+
+func (s *Service) UpdateProfile(ctx context.Context, principal Principal, id string, req UpdateProfileRequest, requireCoreFields bool) (*ProfileResponse, error) {
 	if principal.UserID == "" {
 		return nil, ErrUnauthorized
 	}
@@ -80,6 +89,9 @@ func (s *Service) UpdateProfile(ctx context.Context, principal Principal, id str
 	}
 	if principal.Role != RoleAdmin && principal.UserID != id {
 		return nil, ErrForbidden
+	}
+	if err := validateProfileRequest(req, requireCoreFields); err != nil {
+		return nil, err
 	}
 
 	user, err := s.repository.FindByID(ctx, id)
@@ -97,6 +109,105 @@ func (s *Service) UpdateProfile(ctx context.Context, principal Principal, id str
 
 	response := NewProfileResponse(user)
 	return &response, nil
+}
+
+func (s *Service) GetCurrentVerification(ctx context.Context, principal Principal) (*NIBVerificationResponse, error) {
+	if principal.UserID == "" {
+		return nil, ErrUnauthorized
+	}
+
+	verification, err := s.repository.FindVerificationByUserID(ctx, principal.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewNIBVerificationResponse(verification), nil
+}
+
+func (s *Service) SubmitCurrentVerification(ctx context.Context, principal Principal, req NIBVerificationRequest) (*NIBVerificationResponse, error) {
+	if principal.UserID == "" {
+		return nil, ErrUnauthorized
+	}
+	req.NIBNumber = strings.TrimSpace(req.NIBNumber)
+	if err := validateNIBVerificationRequest(req); err != nil {
+		return nil, err
+	}
+
+	verification := &NIBVerification{
+		UserID:          principal.UserID,
+		NIBNumber:       req.NIBNumber,
+		Status:          NIBVerificationStatusPending,
+		VerifiedAt:      nil,
+		RejectedAt:      nil,
+		RejectionReason: "",
+	}
+	if err := s.repository.UpsertVerification(ctx, verification); err != nil {
+		return nil, err
+	}
+
+	verification, err := s.repository.FindVerificationByUserID(ctx, principal.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewNIBVerificationResponse(verification), nil
+}
+
+func (s *Service) ListVerifications(ctx context.Context, principal Principal) ([]NIBVerificationResponse, error) {
+	if principal.UserID == "" {
+		return nil, ErrUnauthorized
+	}
+	if principal.Role != RoleAdmin {
+		return nil, ErrForbidden
+	}
+
+	records, err := s.repository.ListVerifications(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewNIBVerificationResponses(records), nil
+}
+
+func (s *Service) ReviewVerification(ctx context.Context, principal Principal, id string, req ReviewNIBVerificationRequest) (*NIBVerificationResponse, error) {
+	if principal.UserID == "" {
+		return nil, ErrUnauthorized
+	}
+	if principal.Role != RoleAdmin {
+		return nil, ErrForbidden
+	}
+	if id == "" {
+		return nil, ErrInvalidRequest
+	}
+
+	req.RejectionReason = strings.TrimSpace(req.RejectionReason)
+	if err := validateReviewNIBVerificationRequest(req); err != nil {
+		return nil, err
+	}
+
+	verification, err := s.repository.FindVerificationByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now().UTC()
+	verification.Status = req.Status
+	switch req.Status {
+	case NIBVerificationStatusVerified:
+		verification.VerifiedAt = &now
+		verification.RejectedAt = nil
+		verification.RejectionReason = ""
+	case NIBVerificationStatusRejected:
+		verification.VerifiedAt = nil
+		verification.RejectedAt = &now
+		verification.RejectionReason = req.RejectionReason
+	}
+
+	if err := s.repository.UpdateVerification(ctx, verification); err != nil {
+		return nil, err
+	}
+
+	return NewNIBVerificationResponse(verification), nil
 }
 
 func applyProfileUpdates(user *User, req UpdateProfileRequest) error {
@@ -126,6 +237,31 @@ func applyProfileUpdates(user *User, req UpdateProfileRequest) error {
 			return ErrRequiredCity
 		}
 		user.Profile.City = value
+	}
+
+	if req.BusinessType != nil {
+		user.Profile.BusinessType = strings.TrimSpace(*req.BusinessType)
+	}
+	if req.ProductCategory != nil {
+		user.Profile.ProductCategory = strings.TrimSpace(*req.ProductCategory)
+	}
+	if req.Capacity != nil {
+		user.Profile.Capacity = strings.TrimSpace(*req.Capacity)
+	}
+	if req.MOQ != nil {
+		user.Profile.MOQ = strings.TrimSpace(*req.MOQ)
+	}
+	if req.Certifications != nil {
+		user.Profile.Certifications = strings.TrimSpace(*req.Certifications)
+	}
+	if req.DeliveryArea != nil {
+		user.Profile.DeliveryArea = strings.TrimSpace(*req.DeliveryArea)
+	}
+	if req.Availability != nil {
+		user.Profile.Availability = strings.TrimSpace(*req.Availability)
+	}
+	if req.PurchaseFrequency != nil {
+		user.Profile.PurchaseFrequency = strings.TrimSpace(*req.PurchaseFrequency)
 	}
 
 	return nil
