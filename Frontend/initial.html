@@ -1,1649 +1,1166 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>BENAHI · Lapor. Kawal. Pastikan Nyata.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jalin — FoodLink AI · Prototype Interaktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-/* ============================================================
-   BENAHI · design system "Terang"
-   biru sipil + blueprint grid · kartu putih rounded · stempel warga
-   ============================================================ */
 :root{
-  --blue:#1F6BF2; --blue-deep:#0E4FD1; --blue-sky:#5EA1F9; --blue-ink:#0B3AA0;
-  --blue-wash:#E8F0FE; --blue-wash-2:#F2F7FF;
-
-  --ink:#13294B; --ink-soft:#5D6E8E; --ink-faint:#93A2BE; --line:#E4EAF4;
-  --bg:#F3F6FB; --card:#FFFFFF;
-
-  --amber:#F2A118; --amber-deep:#C97E06; --amber-wash:#FDF1D8;
-  --green:#189A6C; --green-deep:#0E7C55; --green-wash:#DFF4EA;
-  --coral:#E4553F; --coral-deep:#C23A26; --coral-wash:#FBE7E2;
-  --violet:#7A5CF0; --violet-wash:#EEE9FD;
-  --teal:#0F9BAA; --teal-wash:#DFF3F5;
-
-  --r-xl:30px; --r-lg:22px; --r-md:16px; --r-sm:11px;
-  --shadow:0 22px 44px -20px rgba(19,41,75,.35);
-  --shadow-sm:0 10px 22px -12px rgba(19,41,75,.28);
-  --font-display:'Bricolage Grotesque',system-ui,sans-serif;
-  --font-ui:'Public Sans',system-ui,sans-serif;
+  --cream:#F6E7A2;
+  --teal:#2E8F86;
+  --teal-soft:#E4F3F0;
+  --navy:#1E3A5F;
+  --ink:#24313F;
+  --muted:#7A8794;
+  --line:#ECF1F4;
+  --orange:#FF8A3D;
+  --gold:#FFD27A;
+  --grad:linear-gradient(168deg,#3AA697 0%,#2C7F87 42%,#1C3F6E 100%);
+  --shadow:0 26px 52px -18px rgba(30,58,95,.38);
+  --ease:cubic-bezier(0.16, 1, 0.3, 1);      /* Butter-smooth easeOutExpo */
+  --spring:cubic-bezier(.34,1.45,.55,1);     /* Playful overshoot */
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{
-  font-family:var(--font-ui);
-  color:#fff;
-  -webkit-font-smoothing:antialiased;
-  background:
-    radial-gradient(900px 620px at 85% -10%, rgba(94,161,249,.55) 0%, transparent 55%),
-    radial-gradient(800px 700px at -10% 110%, rgba(14,79,209,.65) 0%, transparent 55%),
-    linear-gradient(158deg,#1D5DE0 0%,#1E63E9 45%,#2E7BF0 100%);
-  min-height:100%;
-  display:flex;flex-direction:column;align-items:center;
-  padding:38px 18px 74px;position:relative;overflow-x:hidden;
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--cream)}
+body{font-family:'Poppins',system-ui,sans-serif;color:var(--ink);min-height:100vh}
+button{font-family:inherit;cursor:pointer;transition:transform .22s var(--spring),box-shadow .22s var(--ease),background .18s,color .18s,border-color .18s,opacity .18s}
+button:active{transform:scale(.95)}
+input,select,textarea{font-family:inherit}
+
+/* ---------- Page layout wrapper ---------- */
+.brandbar{display:flex;align-items:center;gap:10px;padding:22px 28px 0}
+.brandbar .mark{width:34px;height:34px;border-radius:10px;background:var(--grad);display:grid;place-items:center;box-shadow:0 8px 16px -6px rgba(28,63,110,.45)}
+.brandbar .mark svg{width:20px;height:20px}
+.brandbar b{font-weight:700;font-size:15px;color:var(--navy)}
+.brandbar b i{font-style:normal;color:#E58A2E}
+.brandbar span{font-size:12px;color:#9a8b4d;font-weight:500}
+
+.wrap{display:flex;align-items:flex-start;justify-content:center;gap:38px;padding:40px 24px 70px;flex-wrap:wrap}
+
+/* ---------- Screen map panel on the side ---------- */
+.panel{width:290px;padding-top:8px}
+.panel h4{font-size:13px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.panel h4 svg{width:15px;height:15px}
+.panel p{font-size:10.5px;color:#9a8b4d;line-height:1.6;margin-bottom:12px;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chips button{border:1.5px solid #E3D493;background:#FBF3C9;color:#6b5f2a;font-size:9.5px;font-weight:600;padding:6px 10px;border-radius:20px;transition:.15s}
+.chips button:hover{background:var(--navy);border-color:var(--navy);color:#fff}
+.chips button.hot{background:var(--navy);border-color:var(--navy);color:#fff}
+.legend{margin-top:16px;font-size:9.5px;color:#9a8b4d;font-weight:500;line-height:1.7}
+.legend b{color:#6b5f2a}
+
+/* ---------- Phone Frame Container ---------- */
+.phone{width:312px;height:668px;background:#fff;border:7px solid #14202e;border-radius:48px;box-shadow:var(--shadow);overflow:hidden;position:relative;flex:0 0 auto}
+.notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:88px;height:24px;background:#14202e;border-radius:20px;z-index:60;pointer-events:none}
+
+/* ---------- Screens slide transitions (Figma smart-animate feel) ---------- */
+.scr{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;overflow:hidden;visibility:hidden;pointer-events:none}
+.scr.on{visibility:visible;pointer-events:auto;z-index:10}
+.scr.leaving{visibility:visible;pointer-events:none;z-index:9}
+
+/* Directions */
+.scr.on.fwd{animation:slideInFwd 0.48s var(--ease) both}
+.scr.leaving.fwd{animation:slideOutFwd 0.48s var(--ease) both}
+.scr.on.back{animation:slideInBack 0.48s var(--ease) both}
+.scr.leaving.back{animation:slideOutBack 0.48s var(--ease) both}
+
+@keyframes slideInFwd {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
-/* blueprint grid, seperti kertas gambar teknik */
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.075) 0 1px, transparent 1px 44px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.075) 0 1px, transparent 1px 44px);
+@keyframes slideOutFwd {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-20%); opacity: 0; }
 }
-body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
-  background-image:radial-gradient(rgba(255,255,255,.10) .6px, transparent .7px);background-size:5px 5px}
-
-a{color:inherit}
-.brico{font-family:var(--font-display)}
-button{font-family:var(--font-ui);cursor:pointer}
-button:focus-visible,.chip:focus-visible{outline:3px solid #fff;outline-offset:2px}
-
-/* ============ stage chrome ============ */
-.stage-head{position:relative;z-index:2;text-align:center;margin-bottom:18px;max-width:800px}
-.wordmark{display:inline-flex;align-items:center;gap:13px;margin-bottom:10px}
-.wordmark .glyph{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;flex:none;
-  background:linear-gradient(150deg,#FFFFFF,#DCE9FF);
-  box-shadow:0 18px 34px -12px rgba(6,32,92,.55), inset 0 -3px 0 rgba(15,70,190,.18)}
-.wordmark h1{font-family:var(--font-display);font-weight:800;font-size:38px;letter-spacing:1px;color:#fff;
-  text-shadow:0 3px 18px rgba(7,38,110,.45)}
-.wordmark h1 span{color:#FFD873}
-.stage-head .tagline{font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:.4px;color:#DCE9FF;margin-bottom:8px}
-.stage-head .lead{color:rgba(233,241,255,.85);font-size:13.5px;line-height:1.7;max-width:640px;margin:0 auto}
-.stage-head .lead b{color:#fff;font-weight:700}
-.status-legend{display:flex;gap:6px;justify-content:center;margin-top:13px;flex-wrap:wrap}
-.status-legend span{font-weight:700;font-size:11px;padding:5px 12px;border-radius:999px;letter-spacing:.2px;
-  background:rgba(9,40,110,.35);border:1px solid rgba(255,255,255,.28)}
-.status-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
-
-/* navigator chips */
-.navrail{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:820px;margin:14px auto 26px}
-.nav-group{font-size:10px;font-weight:800;letter-spacing:2px;color:rgba(220,233,255,.65);width:100%;text-align:center;margin-top:5px;text-transform:uppercase}
-.chip{font-size:12px;font-weight:700;color:#E3EDFF;background:rgba(10,42,116,.35);
-  border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:8px 15px;cursor:pointer;
-  display:inline-flex;align-items:center;gap:7px;transition:.18s;backdrop-filter:blur(6px)}
-.chip:hover{transform:translateY(-2px);background:rgba(10,42,116,.55)}
-.chip.on{background:#fff;color:var(--blue-deep);border-color:#fff;box-shadow:0 12px 26px -10px rgba(6,32,92,.6)}
-
-/* ============ device ============ */
-.device-wrap{position:relative;z-index:2;display:flex;justify-content:center}
-.device{
-  width:392px;height:844px;border-radius:56px;padding:12px;position:relative;
-  background:linear-gradient(160deg,#20355F,#0D1A38);
-  box-shadow:0 60px 110px -40px rgba(4,18,54,.8), 0 0 0 2px rgba(255,255,255,.1) inset,
-             0 0 0 10px #091430, 0 0 0 11.5px rgba(170,200,255,.4);
+@keyframes slideInBack {
+  from { transform: translateX(-20%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
-.device::before{content:"";position:absolute;top:12px;left:50%;transform:translateX(-50%);
-  width:118px;height:27px;background:#091430;border-radius:999px;z-index:60}
-.viewport{width:100%;height:100%;border-radius:44px;overflow:hidden;position:relative;background:var(--bg);color:var(--ink)}
-
-/* status bar */
-.statusbar{position:absolute;top:0;left:0;right:0;height:46px;z-index:55;
-  display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 7px;
-  font-size:13.5px;font-weight:800;pointer-events:none;color:var(--ink);transition:color .3s}
-.statusbar.light{color:#fff;text-shadow:0 1px 3px rgba(9,35,96,.4)}
-.statusbar .r{display:flex;align-items:center;gap:6px}
-
-/* screen system */
-.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;background:var(--bg)}
-.screen.active{display:flex;animation:screenIn .45s cubic-bezier(.2,.8,.2,1)}
-@keyframes screenIn{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){
-  .screen.active{animation:none}
-  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+@keyframes slideOutBack {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
 }
-.body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative}
+
+/* Staggered element entrance */
+.scr.on .fx{animation:rise .5s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Progress bar animation */
+.bar i{transform-origin:left}
+.scr.on .bar i{animation:grow 1s .2s var(--ease) both}
+@keyframes grow{from{transform:scaleX(0)}}
+
+/* Match score circle */
+.scr.on .score-ring circle:last-of-type{animation:ring 1s .2s var(--ease) both}
+@keyframes ring{from{stroke-dasharray:0 120}}
+
+/* Chat bubble entry */
+.msg.pop,.offer.pop{animation:msgIn .42s var(--spring) both}
+.msg.in{transform-origin:left bottom}
+.msg.out{transform-origin:right bottom}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
+
+/* Scroll container with safe margins */
+.body{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
 .body::-webkit-scrollbar{display:none}
 
-/* ============ shared ui ============ */
-.appbar{display:flex;align-items:center;gap:12px;padding:58px 20px 12px;background:var(--card);border-bottom:1px solid var(--line)}
-.appbar .back{width:40px;height:40px;border-radius:13px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;flex:none;transition:.15s}
-.appbar .back:hover{background:var(--blue-wash)}
-.appbar h2{font-family:var(--font-display);font-weight:700;font-size:17.5px;flex:1}
-.appbar .meta{font-size:11.5px;font-weight:700;color:var(--ink-faint)}
+/* ---------- Top Status Bar (Safe Area) ---------- */
+.sb{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 4px;font-size:11px;font-weight:600;position:relative;z-index:30;flex:0 0 auto;height:40px;background:#fff}
+.sb .ic{display:flex;gap:5px;align-items:center}
+.sb svg{width:14px;height:11px;display:block}
+.sb.light{color:#fff;background:transparent}
 
-.section{padding:0 20px;margin-top:20px}
-.section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px}
-.section-head h3{font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:.1px}
-.section-head button{font-size:12px;font-weight:700;color:var(--blue);background:none;border:none}
+/* Shared UI Blocks */
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 14px -8px rgba(30,58,95,.12)}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;font-weight:600;border:0}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:active{transform:scale(.98)}
+.btn-ghost{background:#fff;color:var(--navy);border:1.5px solid #D8E1EA}
+.btn-teal{background:var(--teal);color:#fff}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;font-size:8.5px;font-weight:600;background:var(--teal-soft);color:var(--teal)}
+.badge-nib{display:inline-flex;align-items:center;gap:3px;background:#EAF6EF;color:#2E8F5B;font-size:8px;font-weight:600;padding:2.5px 7px;border-radius:20px}
+.badge-nib svg{width:8px;height:8px}
 
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm)}
+.sec-h{display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px}
+.sec-h b{font-size:12.5px;font-weight:700}
+.sec-h button{font-size:9.5px;color:var(--teal);font-weight:600;background:none;border:0}
+.pad{padding:0 16px}
 
-.badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;letter-spacing:.3px;
-  padding:4px 10px;border-radius:999px}
-.badge svg{flex:none}
-.b-blue{background:var(--blue-wash);color:var(--blue-deep)}
-.b-amber{background:var(--amber-wash);color:var(--amber-deep)}
-.b-green{background:var(--green-wash);color:var(--green-deep)}
-.b-coral{background:var(--coral-wash);color:var(--coral-deep)}
-.b-violet{background:var(--violet-wash);color:#5A3ED6}
-.b-teal{background:var(--teal-wash);color:#0A7B87}
-.b-ghost{background:#EFF3F9;color:var(--ink-soft)}
+/* Headers style (No overlapping) */
+.gradhead{background:var(--grad);color:#fff;padding:0 16px 16px;border-radius:0 0 26px 26px;flex:0 0 auto}
+.gradhead .bar-t{display:flex;align-items:center;justify-content:space-between;padding-top:2px}
+.gradhead h2{font-size:14px;font-weight:700;text-align:center;flex:1}
 
-.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:16px;border:none;
-  border-radius:var(--r-md);font-size:15px;font-weight:800;letter-spacing:.2px;transition:.18s}
-.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;
-  box-shadow:0 14px 28px -12px rgba(14,79,209,.65)}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 18px 32px -12px rgba(14,79,209,.75)}
-.btn-ghost{background:#fff;color:var(--blue-deep);border:1.5px solid var(--line)}
-.btn-ghost:hover{border-color:var(--blue-sky)}
+.rnd{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;border:0}
+.rnd svg{width:13px;height:13px}
+.rnd.dark{background:#fff;border:1px solid var(--line)}
 
-/* bottom nav (di-inject JS) */
-.bottomnav{position:absolute;bottom:0;left:0;right:0;z-index:40;background:rgba(255,255,255,.94);
-  backdrop-filter:blur(12px);border-top:1px solid var(--line);
-  display:flex;align-items:flex-end;justify-content:space-around;padding:8px 10px 20px;height:86px}
-.bn-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:700;
-  color:var(--ink-faint);background:none;border:none;width:60px;padding:4px 0;border-radius:12px}
-.bn-item.on{color:var(--blue-deep)}
-.bn-item.on svg{stroke:var(--blue-deep)}
-.bn-fab{width:58px;height:58px;border-radius:50%;border:none;display:grid;place-items:center;flex:none;
-  background:linear-gradient(140deg,var(--blue-sky),var(--blue-deep));margin-bottom:6px;
-  box-shadow:0 14px 26px -8px rgba(14,79,209,.7), inset 0 2px 0 rgba(255,255,255,.35);transition:.18s}
-.bn-fab:hover{transform:translateY(-3px) scale(1.03)}
-.body.has-nav{padding-bottom:104px}
+.plainhead{display:flex;align-items:center;gap:10px;padding:8px 16px 10px;flex:0 0 auto}
+.plainhead h2{font-size:14px;font-weight:700;flex:1}
+.back{width:28px;height:28px;border-radius:10px;border:1px solid var(--line);background:#fff;display:grid;place-items:center}
+.back svg{width:12px;height:12px}
 
-/* ============ S0 onboarding ============ */
-#s-onboard{background:
-  radial-gradient(600px 420px at 90% -6%, rgba(94,161,249,.5) 0%, transparent 60%),
-  linear-gradient(165deg,#1A56D6 0%,#1E63E9 55%,#3E86F2 100%)}
-#s-onboard::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 38px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1px, transparent 1px 38px)}
-.ob-wrap{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;padding:96px 26px 34px;color:#fff}
-.ob-logo{width:74px;height:74px;border-radius:23px;display:grid;place-items:center;
-  background:linear-gradient(150deg,#FFFFFF,#D9E7FF);
-  box-shadow:0 22px 40px -14px rgba(5,28,86,.65), inset 0 -4px 0 rgba(15,70,190,.16);margin-bottom:20px}
-.ob-wrap h2{font-family:var(--font-display);font-weight:800;font-size:40px;letter-spacing:.5px;line-height:1.02}
-.ob-wrap h2 em{font-style:normal;color:#FFD873}
-.ob-tag{font-family:var(--font-display);font-weight:600;font-size:15.5px;color:#D6E5FF;margin-top:10px;letter-spacing:.3px}
-.ob-points{margin-top:26px;display:flex;flex-direction:column;gap:11px}
-.ob-point{display:flex;gap:13px;align-items:flex-start;background:rgba(9,40,116,.32);
-  border:1px solid rgba(255,255,255,.24);border-radius:var(--r-md);padding:14px 15px;backdrop-filter:blur(4px)}
-.ob-point .ic{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none}
-.ob-point b{display:block;font-size:13.5px;font-weight:800;margin-bottom:3px}
-.ob-point p{font-size:12px;line-height:1.55;color:rgba(224,236,255,.85)}
-.ob-cta{margin-top:auto;display:flex;flex-direction:column;gap:10px}
-.ob-cta .btn-primary{background:#fff;color:var(--blue-deep);box-shadow:0 16px 30px -12px rgba(4,24,72,.6)}
-.ob-cta .alt{background:none;border:none;color:rgba(226,238,255,.9);font-size:12.5px;font-weight:700;padding:6px}
-.ob-cta .alt u{text-underline-offset:3px}
+/* Form inputs style */
+.field{margin-bottom:12px;text-align:left}
+.field label{font-size:9px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid #E2E9EF;border-radius:11px;padding:9px 11px;font-size:10px;font-weight:500;color:var(--ink);background:#FBFCFD;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 
-/* ============ S1 beranda ============ */
-.home-hero{position:relative;padding:60px 20px 58px;color:#fff;
-  background:
-    radial-gradient(420px 260px at 88% 0%, rgba(120,178,255,.55) 0%, transparent 60%),
-    linear-gradient(150deg,#1A56D6,#1E63E9 60%,#3E86F2);
-  border-radius:0 0 34px 34px}
-.home-hero::before{content:"";position:absolute;inset:0;border-radius:0 0 34px 34px;pointer-events:none;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px 34px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 34px)}
-.home-top{position:relative;display:flex;align-items:center;gap:12px}
-.avatar{width:46px;height:46px;border-radius:15px;flex:none;position:relative;overflow:hidden;
-  border:2px solid rgba(255,255,255,.65);box-shadow:0 8px 18px -6px rgba(5,28,86,.5)}
-.home-top .who{flex:1;min-width:0}
-.home-top .hi{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#CFE0FF}
-.home-top .name{font-family:var(--font-display);font-weight:700;font-size:18.5px;letter-spacing:.2px;margin-top:1px}
-.loc-chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#DBE8FF;margin-top:3px}
-.bell{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);
-  display:grid;place-items:center;position:relative;flex:none;transition:.15s;cursor:pointer}
-.bell:hover{background:rgba(255,255,255,.26)}
-.bell .dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:#FF6B54;border:2px solid #2264E4}
-.searchbar{position:relative;margin-top:18px;display:flex;align-items:center;gap:10px;background:#fff;
-  border-radius:18px;padding:15px 16px;box-shadow:0 18px 34px -16px rgba(6,32,92,.55);cursor:text}
-.searchbar span{font-size:13.5px;font-weight:600;color:var(--ink-faint)}
-.hero-stat{position:relative;display:flex;gap:8px;margin-top:14px}
-.hero-stat span{font-size:10.5px;font-weight:700;color:#E2EDFF;background:rgba(9,40,116,.35);
-  border:1px solid rgba(255,255,255,.25);padding:5px 11px;border-radius:999px}
-.hero-stat b{color:#FFD873}
+/* Bottom Navigation */
+.nav{flex:0 0 auto;display:flex;justify-content:space-around;align-items:center;padding:8px 8px 18px;border-top:1px solid var(--line);background:#fff;position:relative}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:8px;font-weight:500;color:#9AA7B4;background:none;border:0;width:52px}
+.nav button.on{color:var(--navy);font-weight:600}
+.nav svg{width:19px;height:19px}
+.nav .plus{width:46px;height:46px;border-radius:50%;background:var(--grad);margin-top:-26px;display:grid;place-items:center;box-shadow:0 10px 18px -6px rgba(28,63,110,.5);border:3.5px solid #fff}
+.nav .plus svg{width:20px;height:20px}
 
-.cat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.cat{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 6px 10px;
-  display:flex;flex-direction:column;align-items:center;gap:7px;transition:.16s;cursor:pointer;box-shadow:var(--shadow-sm)}
-.cat:hover{transform:translateY(-3px);border-color:var(--blue-sky)}
-.cat .tile{width:46px;height:46px;border-radius:14px;display:grid;place-items:center}
-.cat span{font-size:10.5px;font-weight:700;color:var(--ink-soft);text-align:center}
-.t-blue{background:var(--blue-wash)} .t-amber{background:var(--amber-wash)}
-.t-teal{background:var(--teal-wash)} .t-green{background:var(--green-wash)}
+/* Toast message */
+.toast{position:absolute;left:50%;bottom:86px;transform:translateX(-50%) translateY(18px) scale(.85);background:#14202e;color:#fff;font-size:9px;font-weight:600;padding:8px 14px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease),transform .5s var(--ease);z-index:80;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%)}
 
-.report-card{padding:15px;border-left:5px solid var(--amber);display:flex;flex-direction:column;gap:12px}
-.report-card .top{display:flex;gap:12px;align-items:center}
-.thumb{width:56px;height:56px;border-radius:14px;overflow:hidden;flex:none;border:1px solid var(--line)}
-.thumb svg{display:block;width:100%;height:100%}
-.report-card .info{flex:1;min-width:0}
-.report-card .title{font-weight:800;font-size:14px;letter-spacing:.1px;line-height:1.3}
-.report-card .sub{font-size:11.5px;font-weight:600;color:var(--ink-soft);margin-top:2px}
-.report-card .row2{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.sla{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--amber-deep)}
-.stepdots{display:flex;gap:5px;align-items:center}
-.stepdots i{width:22px;height:5px;border-radius:99px;background:var(--line)}
-.stepdots i.done{background:var(--blue)}
-.stepdots i.now{background:var(--amber)}
-.report-card .cta{align-self:stretch;display:flex;gap:9px}
-.report-card .cta button{flex:1;padding:11px;border-radius:12px;font-size:12.5px;font-weight:800;border:none}
-.report-card .cta .see{background:var(--blue-wash);color:var(--blue-deep)}
-.report-card .cta .see:hover{background:#DBE8FD}
+/* ============ SPLASH ============ */
+.splash{background:var(--grad);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;position:relative;overflow:hidden}
+.halo{position:absolute;width:350px;height:350px;border-radius:50%;border:1.5px solid rgba(255,255,255,.10)}
+.halo.h2{width:255px;height:255px;border-color:rgba(255,255,255,.16)}
+.ali-big{width:130px;height:145px;filter:drop-shadow(0 14px 22px rgba(0,0,0,.3));position:relative;z-index:2;animation:float 3.4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.wordmark{margin-top:14px;position:relative;z-index:2;text-align:center}
+.wordmark h1{font-size:36px;font-weight:800;letter-spacing:.5px;color:#fff;text-shadow:0 6px 14px rgba(0,0,0,.25)}
+.wordmark h1 .ali-name{color:var(--gold)}
+.wordmark p{font-size:9.5px;font-weight:500;opacity:.9;margin-top:4px}
+.start-btn{margin-top:22px;position:relative;z-index:2;background:#fff;color:var(--navy);font-size:11px;font-weight:700;padding:11px 34px;border-radius:24px;border:0;box-shadow:0 10px 20px -8px rgba(0,0,0,.35)}
 
-.kawal-scroll{display:flex;gap:11px;overflow-x:auto;padding:2px 20px 8px;scroll-snap-type:x mandatory}
-.kawal-scroll::-webkit-scrollbar{display:none}
-.kawal-card{flex:0 0 218px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);
-  border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
-.kawal-card .ph{height:96px;position:relative}
-.kawal-card .ph svg{display:block;width:100%;height:100%}
-.kawal-card .dist{position:absolute;top:8px;left:8px;font-size:10px;font-weight:800;color:#fff;
-  background:rgba(10,30,74,.65);padding:4px 9px;border-radius:999px;backdrop-filter:blur(3px)}
-.kawal-card .pad{padding:11px 13px 13px}
-.kawal-card .t{font-weight:800;font-size:12.5px;line-height:1.35}
-.kawal-card .m{font-size:10.5px;font-weight:600;color:var(--ink-soft);margin-top:3px}
-.kawal-card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
-.kawal-card .go{font-size:11px;font-weight:800;color:#fff;background:var(--blue);border:none;
-  padding:7px 12px;border-radius:10px;transition:.15s}
-.kawal-card .go:hover{background:var(--blue-deep)}
-.pts{font-size:10.5px;font-weight:800;color:var(--amber-deep)}
+/* ============ ROLE SELECTION ============ */
+.rolecard{display:flex;align-items:center;gap:11px;padding:13px;margin-bottom:10px;border:1.5px solid var(--line);border-radius:16px;background:#fff;width:100%;text-align:left;transition:.15s}
+.rolecard:active{transform:scale(.98)}
+.rolecard .em{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+.rolecard b{font-size:11.5px;font-weight:700;display:block}
+.rolecard small{font-size:8.5px;color:var(--muted);line-height:1.45;display:block}
+.rolecard .arr{margin-left:auto;color:#C4CFDA}
 
-.sosmed-strip{margin:18px 20px 0;display:flex;align-items:center;gap:12px;padding:13px 15px;cursor:pointer;
-  background:linear-gradient(135deg,#14224A,#25408B);border-radius:var(--r-md);color:#fff;border:none;width:calc(100% - 40px);
-  box-shadow:var(--shadow-sm);text-align:left;transition:.16s}
-.sosmed-strip:hover{transform:translateY(-2px)}
-.sosmed-strip .ic{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.14);display:grid;place-items:center;flex:none}
-.sosmed-strip b{display:block;font-size:12.5px;font-weight:800}
-.sosmed-strip p{font-size:10.5px;color:#B9C9EF;margin-top:2px}
+/* ============ NIB VERIFICATION ============ */
+.nib-illu{text-align:center;padding:18px 0 6px}
+.nib-illu .ali-mini{width:84px;height:94px}
+.nib-state{display:none;text-align:center;padding:10px 0 2px}
+.nib-state.show{display:block}
+.nib-state .ok{width:52px;height:52px;border-radius:50%;background:#EAF6EF;display:grid;place-items:center;margin:0 auto 8px}
+.nib-state .ok svg{width:24px;height:24px}
 
-/* ============ S2 form lapor ============ */
-.f-label{font-size:12px;font-weight:800;letter-spacing:.4px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.f-label .req{color:var(--coral)}
-.upload{border:2px dashed #BFD2F0;background:var(--blue-wash-2);border-radius:var(--r-md);padding:14px;
-  display:flex;gap:12px;align-items:center}
-.upload .shot{width:74px;height:74px;border-radius:13px;overflow:hidden;flex:none;position:relative;border:1px solid var(--line)}
-.upload .shot svg{display:block;width:100%;height:100%}
-.upload .shot .ok{position:absolute;right:5px;bottom:5px;width:20px;height:20px;border-radius:50%;background:var(--green);
-  display:grid;place-items:center;border:2px solid #fff}
-.upload .add{width:74px;height:74px;border-radius:13px;border:1.5px dashed #A9C2EC;background:#fff;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--blue);font-size:10px;font-weight:800}
-.upload .add:hover{background:var(--blue-wash)}
-.upload .note{flex:1;font-size:11px;line-height:1.5;color:var(--ink-soft);font-weight:600}
+/* ============ HOME SCREEN ============ */
+.home-head{display:flex;align-items:center;gap:10px;padding:12px 16px 12px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--teal-soft);display:grid;place-items:center;border:2px solid #fff;box-shadow:0 3px 8px rgba(30,58,95,.15);font-size:18px}
+.home-head .who{flex:1;text-align:left}
+.home-head .who small{display:block;font-size:9px;color:var(--muted)}
+.home-head .who b{font-size:12.5px;font-weight:700}
+.bell{position:relative;width:34px;height:34px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center}
+.bell svg{width:16px;height:16px}
+.bell i{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:#FF5A5A;border:1.5px solid #fff}
 
-.ai-suggest{display:flex;align-items:center;gap:10px;background:var(--violet-wash);border:1px solid #DCD2FA;
-  border-radius:var(--r-sm);padding:10px 12px;margin-bottom:10px}
-.ai-suggest .sp{width:30px;height:30px;border-radius:10px;background:#fff;display:grid;place-items:center;flex:none}
-.ai-suggest p{font-size:11.5px;font-weight:600;color:#4A34B8;line-height:1.4}
-.ai-suggest b{font-weight:800}
-.cat-pick{display:flex;gap:7px;flex-wrap:wrap}
-.pick{font-size:12px;font-weight:700;padding:9px 14px;border-radius:999px;border:1.5px solid var(--line);
-  background:#fff;color:var(--ink-soft);transition:.15s}
-.pick:hover{border-color:var(--blue-sky)}
-.pick.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 8px 16px -8px rgba(14,79,209,.6)}
+.cta{background:var(--grad);border-radius:18px;padding:13px;display:flex;align-items:center;gap:10px;color:#fff;position:relative;overflow:hidden;width:100%;border:0;text-align:left}
+.cta .ali-mini{width:54px;height:60px;flex:0 0 auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+.cta b{font-size:13px;font-weight:700;display:block}
+.cta p{font-size:8.5px;opacity:.87;margin-top:2px;line-height:1.45}
+.cta .go{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.cta .go svg{width:12px;height:12px}
 
-.map-box{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line);position:relative;box-shadow:var(--shadow-sm)}
-.map-box svg{display:block;width:100%}
-.map-pin-note{position:absolute;left:10px;bottom:10px;font-size:10px;font-weight:800;color:var(--ink);
-  background:rgba(255,255,255,.92);padding:5px 10px;border-radius:999px;box-shadow:var(--shadow-sm)}
-.addr{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);
-  padding:11px 13px;margin-top:9px}
-.addr p{flex:1;font-size:12.5px;font-weight:700}
-.addr span{font-size:10.5px;color:var(--ink-soft);font-weight:600;display:block;margin-top:1px}
-.addr button{font-size:11px;font-weight:800;color:var(--blue);background:var(--blue-wash);border:none;padding:7px 11px;border-radius:9px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{padding:11px 12px;text-align:left}
+.stat .row{display:flex;justify-content:space-between;align-items:center}
+.stat small{font-size:8.5px;color:var(--muted);font-weight:500}
+.stat .num{font-size:18px;font-weight:800;color:var(--navy);margin-top:2px}
+.stat .unit{font-size:8px;color:#fff;background:var(--teal);border-radius:6px;padding:2px 6px;font-weight:600}
+.stat .icon{width:24px;height:24px;border-radius:8px;display:grid;place-items:center}
+.stat .icon svg{width:13px;height:13px}
 
-textarea.f-input{width:100%;border:1.5px solid var(--line);border-radius:var(--r-sm);padding:13px 14px;
-  font-family:var(--font-ui);font-size:13.5px;font-weight:600;color:var(--ink);resize:none;background:#fff;line-height:1.55}
-textarea.f-input:focus{outline:none;border-color:var(--blue-sky);box-shadow:0 0 0 3px rgba(94,161,249,.25)}
-.f-help{display:flex;justify-content:space-between;font-size:10.5px;font-weight:600;color:var(--ink-faint);margin-top:5px}
+.mcard{padding:11px;margin-bottom:9px;width:100%;text-align:left;display:block}
+.mcard .top{display:flex;gap:8px;align-items:center}
+.mcard .logo{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:14px;background:#FFF1E4;flex:0 0 auto}
+.mcard b{font-size:10px;font-weight:700;display:block}
+.mcard .foot{margin-top:7px;display:flex;gap:4px;flex-wrap:wrap}
 
-.urgency{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.urg{border:1.5px solid var(--line);background:#fff;border-radius:var(--r-sm);padding:11px 6px 10px;
-  display:flex;flex-direction:column;align-items:center;gap:5px;transition:.16s}
-.urg span{font-size:11.5px;font-weight:800}
-.urg small{font-size:9px;font-weight:600;color:var(--ink-faint)}
-.urg[data-u="1"].on{border-color:var(--teal);background:var(--teal-wash)}
-.urg[data-u="2"].on{border-color:var(--amber);background:var(--amber-wash);box-shadow:0 10px 20px -10px rgba(201,126,6,.5)}
-.urg[data-u="3"].on{border-color:var(--coral);background:var(--coral-wash)}
+/* ============ MATCH SCREEN ============ */
+.ali-say{display:flex;gap:8px;align-items:center;margin-top:8px;text-align:left}
+.ali-say .ali-mini{width:44px;height:49px;flex:0 0 auto}
+.bubble{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:12px 12px 12px 3px;padding:7px 10px;font-size:8.5px;line-height:1.5;color:#fff}
+.bubble b{font-weight:700}
 
-.anon-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:13px 14px}
-.anon-row .tx{flex:1}
-.anon-row b{font-size:13px;font-weight:800}
-.anon-row p{font-size:10.5px;font-weight:600;color:var(--ink-soft);margin-top:2px;line-height:1.45}
-.toggle{width:46px;height:27px;border-radius:999px;background:#D6DEEB;border:none;position:relative;transition:.2s;flex:none}
-.toggle::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;
-  box-shadow:0 2px 6px rgba(19,41,75,.3);transition:.2s}
-.toggle.on{background:var(--green)}
-.toggle.on::after{left:22px}
+.match-big{margin:14px 16px 0;padding:13px;position:relative;text-align:left}
+.match-big .head{display:flex;gap:10px}
+.match-big .logo{width:44px;height:44px;border-radius:14px;background:#FFF1E4;display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+.match-big .nm b{font-size:12px;font-weight:700;display:block}
+.match-big .nm small{font-size:8.5px;color:var(--muted)}
 
-.dup-hint{display:flex;gap:11px;align-items:flex-start;background:var(--amber-wash);border:1px solid #F3DBA4;
-  border-radius:var(--r-sm);padding:12px 13px;margin-top:16px}
-.dup-hint p{font-size:11.5px;line-height:1.55;font-weight:600;color:#7A5104}
-.dup-hint b{font-weight:800}
+.score-ring{margin-left:auto;width:46px;height:46px;position:relative;flex:0 0 auto}
+.score-ring svg{width:46px;height:46px;transform:rotate(-90deg)}
+.score-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:10.5px;font-weight:800;color:var(--teal)}
 
-/* ============ S3 terkirim ============ */
-.sent-hero{display:flex;flex-direction:column;align-items:center;padding:86px 24px 6px;text-align:center}
-.check-ring{width:92px;height:92px;border-radius:50%;background:var(--green-wash);display:grid;place-items:center;position:relative;margin-bottom:18px}
-.check-ring::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px dashed #9FDCC3;animation:spin 14s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.check-ring .in{width:64px;height:64px;border-radius:50%;background:var(--green);display:grid;place-items:center;
-  box-shadow:0 16px 30px -10px rgba(24,154,108,.6)}
-.check-ring path{stroke-dasharray:34;animation:draw .4s ease-out backwards}
-@keyframes draw{from{stroke-dashoffset:34}to{stroke-dashoffset:0}}
-.sent-hero h2{font-family:var(--font-display);font-weight:800;font-size:23px}
-.sent-hero .no{font-size:12px;font-weight:800;color:var(--blue-deep);background:var(--blue-wash);
-  padding:6px 14px;border-radius:999px;margin-top:9px;letter-spacing:.5px}
-.sent-hero p{font-size:12.5px;color:var(--ink-soft);font-weight:600;margin-top:10px;line-height:1.6;max-width:280px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}
+.kv div{background:#F7FAFB;border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.kv small{font-size:7.5px;color:var(--muted);display:block;font-weight:500}
+.kv b{font-size:9.5px;font-weight:700}
 
-.route-flow{padding:16px 15px;display:flex;flex-direction:column;gap:0}
-.rf-item{display:flex;gap:13px;align-items:flex-start;position:relative;padding-bottom:18px}
-.rf-item:last-child{padding-bottom:0}
-.rf-item::before{content:"";position:absolute;left:19px;top:40px;bottom:0;width:2px;background:var(--line)}
-.rf-item:last-child::before{display:none}
-.rf-ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;z-index:1}
-.rf-item b{font-size:13px;font-weight:800;display:block}
-.rf-item p{font-size:11px;font-weight:600;color:var(--ink-soft);margin-top:2px;line-height:1.5}
-.rf-item .tag{margin-top:6px}
+.mb-actions{display:flex;gap:8px;margin-top:12px}
+.mb-actions .btn{flex:1;height:34px;font-size:10px}
 
-/* ============ S4 detail laporan ============ */
-.detail-hero{position:relative;height:250px;flex:none}
-.detail-hero svg.scene{position:absolute;inset:0;width:100%;height:100%}
-.detail-hero .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,22,52,.62) 0%,rgba(9,22,52,.18) 30%,transparent 45%,rgba(9,22,52,.55) 100%)}
-.detail-hero .back,.detail-hero .share{position:absolute;top:58px;width:40px;height:40px;border-radius:13px;
-  background:rgba(255,255,255,.92);border:none;display:grid;place-items:center;box-shadow:var(--shadow-sm)}
-.detail-hero .back{left:16px}
-.detail-hero .share{right:16px}
-.detail-hero .stchip{position:absolute;left:16px;bottom:14px}
-.detail-body{background:var(--bg);border-radius:26px 26px 0 0;margin-top:-24px;position:relative;z-index:2;padding-top:20px}
-.d-title{padding:0 20px}
-.d-title h2{font-family:var(--font-display);font-weight:800;font-size:20px;line-height:1.25}
-.d-meta{display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap}
-.upvote{display:inline-flex;align-items:center;gap:7px;margin-top:12px;background:#fff;border:1.5px solid var(--line);
-  border-radius:999px;padding:9px 15px;font-size:12.5px;font-weight:800;color:var(--ink);transition:.15s}
-.upvote:hover{border-color:var(--blue-sky)}
-.upvote.on{background:var(--blue-wash);border-color:var(--blue);color:var(--blue-deep)}
-.agency{margin:16px 20px 0;padding:14px 15px;display:flex;gap:12px;align-items:center}
-.agency .logo{width:44px;height:44px;border-radius:13px;background:var(--blue-wash);display:grid;place-items:center;flex:none}
-.agency .tx{flex:1;min-width:0}
-.agency b{font-size:13px;font-weight:800;display:block}
-.agency p{font-size:10.5px;font-weight:600;color:var(--ink-soft);margin-top:2px}
-.sla-bar{margin-top:8px;height:7px;border-radius:99px;background:#EDF1F8;overflow:hidden}
-.sla-bar i{display:block;height:100%;width:57%;border-radius:99px;background:linear-gradient(90deg,var(--amber),#F7BE4F)}
+.why{margin:10px 16px 0;padding:10px 12px;text-align:left}
+.why b{font-size:10px;font-weight:700;display:flex;align-items:center;gap:5px}
+.why b svg{width:11px;height:11px}
+.why p{font-size:8.5px;color:var(--muted);line-height:1.55;margin-top:4px}
 
-.timeline{margin:16px 20px 0;padding:17px 16px}
-.tl-item{display:flex;gap:13px;position:relative;padding-bottom:20px}
-.tl-item:last-child{padding-bottom:2px}
-.tl-item::before{content:"";position:absolute;left:12.5px;top:28px;bottom:-2px;width:2.5px;background:var(--line);border-radius:2px}
-.tl-item:last-child::before{display:none}
-.tl-item.done::before{background:var(--blue)}
-.tl-dot{width:27px;height:27px;border-radius:50%;flex:none;display:grid;place-items:center;z-index:1;
-  background:#EDF1F8;border:2px solid var(--line)}
-.tl-item.done .tl-dot{background:var(--blue);border-color:var(--blue)}
-.tl-item.now .tl-dot{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 5px rgba(242,161,24,.22)}
-.tl-item .tx b{font-size:13px;font-weight:800;display:block}
-.tl-item .tx time{font-size:10px;font-weight:700;color:var(--ink-faint);letter-spacing:.2px}
-.tl-item .tx p{font-size:11px;font-weight:600;color:var(--ink-soft);margin-top:3px;line-height:1.5}
-.tl-item.dim .tx b{color:var(--ink-faint)}
-.tl-item .tx .tag{margin-top:5px}
+/* Match overlay */
+.overlay{position:absolute;inset:0;background:rgba(20,32,46,.55);backdrop-filter:blur(3px);z-index:70;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .38s var(--ease)}
+.overlay.show{opacity:1;pointer-events:auto}
+.mpop{width:82%;background:var(--grad);border-radius:22px;padding:20px 16px;text-align:center;color:#fff;transform:scale(.72) translateY(26px);transition:transform .6s var(--spring)}
+.overlay.show .mpop{transform:none}
+.mpop>*{opacity:0;transform:translateY(14px);transition:opacity .4s var(--ease),transform .55s var(--spring)}
+.overlay.show .mpop>*{opacity:1;transform:none}
+.overlay.show .mpop>*:nth-child(1){transition-delay:.10s}
+.overlay.show .mpop>*:nth-child(2){transition-delay:.17s}
+.overlay.show .mpop>*:nth-child(3){transition-delay:.24s}
+.overlay.show .mpop>*:nth-child(4){transition-delay:.31s}
+.overlay.show .mpop>*:nth-child(5){transition-delay:.38s}
+.overlay.show .mpop>*:nth-child(6){transition-delay:.45s}
+.mpop .duo{display:flex;justify-content:center;align-items:center;gap:-6px;margin-bottom:8px}
+.mpop .pfp{width:52px;height:52px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:23px;border:3px solid var(--gold)}
+.mpop .pfp+.pfp{margin-left:-12px}
+.mpop .ali-mini{width:56px;height:62px;margin:-32px auto 0;position:relative}
+.mpop h3{font-size:15px;font-weight:800;margin-top:6px}
+.mpop h3 i{font-style:normal;color:var(--gold)}
+.mpop p{font-size:8.5px;opacity:.9;line-height:1.55;margin-top:5px}
+.mpop .btn{width:100%;height:36px;font-size:10.5px;margin-top:13px;background:#fff;color:var(--navy)}
+.mpop .later{background:none;border:0;color:rgba(255,255,255,.8);font-size:9px;font-weight:600;margin-top:9px}
 
-.rule-note{margin:14px 20px 0;display:flex;gap:11px;align-items:flex-start;background:var(--green-wash);
-  border:1px solid #BFE7D4;border-radius:var(--r-sm);padding:12px 13px}
-.rule-note p{font-size:11.5px;line-height:1.55;font-weight:600;color:#0B6B49}
-.rule-note b{font-weight:800}
+/* ============ CHAT SCREEN ============ */
+.chat-head{display:flex;align-items:center;gap:9px;padding:6px 14px 10px;border-bottom:1px solid var(--line);flex:0 0 auto;text-align:left}
+.chat-head .pf{width:34px;height:34px;border-radius:50%;background:#FFF1E4;display:grid;place-items:center;font-size:15px}
+.chat-head .nm{flex:1}
+.chat-head .nm b{font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px}
+.chat-head .nm small{font-size:8px;color:#3BAE7C;font-weight:500}
 
-/* ============ S5 kawal ============ */
-.kw-head{padding:60px 20px 16px;background:var(--card);border-bottom:1px solid var(--line)}
-.kw-head h2{font-family:var(--font-display);font-weight:800;font-size:21px}
-.kw-head p{font-size:12px;font-weight:600;color:var(--ink-soft);margin-top:4px}
-.kw-head b{color:var(--blue-deep)}
-.task-card{margin:0 20px 12px;padding:13px;display:flex;gap:12px;align-items:center}
-.task-card .thumb{width:64px;height:64px}
-.task-card .tx{flex:1;min-width:0}
-.task-card .t{font-weight:800;font-size:13px;line-height:1.3}
-.task-card .m{font-size:10.5px;font-weight:600;color:var(--ink-soft);margin-top:3px}
-.task-card .foot{display:flex;align-items:center;gap:8px;margin-top:7px}
-.quorum{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:var(--ink-soft)}
-.quorum .q{display:flex;gap:2.5px}
-.quorum .q i{width:9px;height:9px;border-radius:50%;background:#E1E8F2;border:1px solid #CBD6E6}
-.quorum .q i.f{background:var(--green);border-color:var(--green)}
-.task-card .go{align-self:center;flex:none;font-size:11px;font-weight:800;color:#fff;background:var(--blue);
-  border:none;padding:9px 13px;border-radius:11px;transition:.15s}
-.task-card .go:hover{background:var(--blue-deep)}
-.why-me{margin:6px 20px 0;display:flex;gap:11px;align-items:flex-start;background:var(--blue-wash-2);
-  border:1px solid #D8E5FA;border-radius:var(--r-sm);padding:12px 13px}
-.why-me p{font-size:11px;line-height:1.55;font-weight:600;color:#2B549E}
-.why-me b{font-weight:800}
-.why-me button{background:none;border:none;color:var(--blue-deep);font-weight:800;font-size:11px;text-decoration:underline;text-underline-offset:2px;padding:0}
+.pin{margin:9px 14px 0;background:linear-gradient(135deg,#F2FAF8,#EAF2FA);border:1px solid #D9EAE6;border-radius:13px;padding:8px 11px;display:flex;align-items:center;gap:8px;flex:0 0 auto;text-align:left}
+.pin svg{width:15px;height:15px;flex:0 0 auto}
+.pin b{font-size:9px;font-weight:700;display:block}
+.pin small{font-size:7.5px;color:var(--muted)}
+.pin .open{margin-left:auto;font-size:8px;font-weight:700;color:#fff;background:var(--navy);padding:5px 9px;border-radius:8px;white-space:nowrap;border:0}
 
-/* ============ S6 bandingkan bukti ============ */
-.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.cmp-cell{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow-sm)}
-.cmp-cell .lab{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:800;padding:8px 10px;letter-spacing:.2px}
-.cmp-cell .lab.claim{background:var(--violet-wash);color:#5A3ED6}
-.cmp-cell .lab.mine{background:var(--blue-wash);color:var(--blue-deep)}
-.cmp-cell svg.cmp-scene{display:block;width:100%;height:110px}
-.cmp-cell .cam{height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  background:repeating-linear-gradient(45deg,#F4F8FE 0 12px,#EDF3FC 12px 24px);color:var(--blue-deep);
-  font-size:10.5px;font-weight:800;border:none;width:100%}
-.cmp-cell .cam:hover{background:var(--blue-wash)}
-.before-strip{display:flex;align-items:center;gap:10px;margin-top:10px;background:#fff;border:1px solid var(--line);
-  border-radius:var(--r-sm);padding:9px 11px}
-.before-strip .bthumb{width:42px;height:42px;border-radius:10px;overflow:hidden;flex:none;border:1px solid var(--line)}
-.before-strip .bthumb svg{display:block;width:100%;height:100%}
-.before-strip p{font-size:10.5px;font-weight:700;color:var(--ink-soft)}
-.before-strip b{color:var(--ink);font-weight:800}
+.msgs{flex:1;padding:11px 14px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;scrollbar-width:none}
+.msgs::-webkit-scrollbar{display:none}
+.msg{max-width:80%;padding:8px 11px;font-size:9px;line-height:1.55;border-radius:13px;box-shadow:0 3px 8px -4px rgba(30,58,95,.12);text-align:left}
+.msg.in{background:#F3F6F8;border-radius:13px 13px 13px 4px;align-self:flex-start}
+.msg.out{background:var(--navy);color:#fff;border-radius:13px 13px 4px 13px;align-self:flex-end}
+.msg time{display:block;font-size:6.5px;opacity:.55;margin-top:3px;text-align:right}
 
-.ask-card{margin-top:16px;padding:17px 16px;text-align:center}
-.ask-card h3{font-family:var(--font-display);font-weight:800;font-size:16.5px;line-height:1.35}
-.ask-card .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
-.vote{border:none;border-radius:var(--r-sm);padding:14px 8px;font-size:12.5px;font-weight:800;display:flex;
-  flex-direction:column;align-items:center;gap:6px;transition:.16s}
-.vote.yes{background:var(--green-wash);color:var(--green-deep);border:1.5px solid #BFE7D4}
-.vote.yes:hover,.vote.yes.on{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 12px 24px -10px rgba(24,154,108,.6)}
-.vote.no{background:var(--coral-wash);color:var(--coral-deep);border:1.5px solid #F4CCC2}
-.vote.no:hover,.vote.no.on{background:var(--coral);color:#fff;border-color:var(--coral);box-shadow:0 12px 24px -10px rgba(228,85,63,.6)}
-.vote.yes.on svg,.vote.no.on svg{stroke:#fff}
-.quorum-big{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px}
-.qb-ava{display:flex}
-.qb-ava .a{width:30px;height:30px;border-radius:50%;border:2.5px solid #fff;margin-left:-8px;display:grid;place-items:center;
-  font-size:10px;font-weight:800;color:#fff}
-.qb-ava .a:first-child{margin-left:0}
-.quorum-big p{font-size:11.5px;font-weight:800;color:var(--ink-soft)}
-.quorum-big b{color:var(--ink)}
+.offer{align-self:flex-start;max-width:84%;background:#fff;border:1.5px solid var(--teal);border-radius:13px 13px 13px 4px;padding:9px 11px;text-align:left}
+.offer small{font-size:7px;font-weight:700;color:var(--teal);letter-spacing:.4px}
+.offer .rw{display:flex;justify-content:space-between;font-size:8.5px;margin-top:4px;gap:14px}
+.offer .rw b{font-weight:700}
+.offer .ok{margin-top:7px;display:flex;gap:6px}
+.offer .ok button{flex:1;text-align:center;font-size:8px;font-weight:600;padding:6px 0;border-radius:8px;border:0}
+.offer .ok .y{background:var(--teal);color:#fff}
+.offer .ok .n{border:1px solid #D8E1EA;background:#fff;color:var(--navy)}
+.offer.accepted{border-color:#3BAE7C;background:#F4FBF7}
 
-.stamp{position:relative;margin:18px auto 4px;width:max-content;transform:rotate(-7deg);
-  font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:2.5px;color:var(--green-deep);
-  border:3.5px solid var(--green-deep);border-radius:10px;padding:9px 18px;display:none}
-.stamp::after{content:"";position:absolute;inset:3px;border:1.5px solid var(--green-deep);border-radius:6px;opacity:.5}
-.stamp.show{display:block;opacity:.92;animation:stampIn .35s cubic-bezier(.2,1.4,.4,1)}
-@keyframes stampIn{from{opacity:0;transform:rotate(-7deg) scale(1.6)}to{opacity:.92;transform:rotate(-7deg) scale(1)}}
-.verify-result{display:none;margin-top:14px;font-size:11.5px;font-weight:700;line-height:1.55;padding:11px 13px;border-radius:var(--r-sm)}
-.verify-result.ok{display:block;background:var(--green-wash);color:var(--green-deep)}
-.verify-result.fail{display:block;background:var(--coral-wash);color:var(--coral-deep)}
+.inputbar{display:flex;gap:8px;align-items:center;padding:9px 14px 18px;border-top:1px solid var(--line);flex:0 0 auto}
+.inputbar input{flex:1;background:#F3F6F8;border:0;border-radius:20px;padding:10px 13px;font-size:9.5px;outline:none}
+.inputbar .send{width:34px;height:34px;border-radius:50%;background:var(--navy);display:grid;place-items:center;flex:0 0 auto;border:0}
+.inputbar .send svg{width:14px;height:14px}
 
-.lock-note{margin-top:14px;display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);
-  border-radius:var(--r-sm);padding:11px 13px}
-.lock-note p{font-size:10.5px;line-height:1.5;font-weight:600;color:var(--ink-soft)}
-.lock-note b{color:var(--ink)}
+/* ============ RFQ & DOCUMENT ============ */
+.steps{display:flex;align-items:center;margin-top:12px;padding:0 2px}
+.stp{display:flex;flex-direction:column;align-items:center;gap:4px;flex:0 0 auto}
+.stp .c{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:700;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.5)}
+.stp.done .c{background:#fff;border-color:#fff}
+.stp.done .c svg{width:10px;height:10px}
+.stp small{font-size:6.5px;font-weight:500;opacity:.9}
+.stline{flex:1;height:2px;background:rgba(255,255,255,.35);margin:0 3px 14px}
+.stline.done{background:#fff}
 
-/* ============ S7 sinyal sosmed ============ */
-.seg{display:flex;background:#E9EEF6;border-radius:13px;padding:4px;gap:4px;margin:14px 20px 0}
-.seg button{flex:1;border:none;background:none;font-size:12px;font-weight:800;color:var(--ink-soft);
-  padding:9px;border-radius:10px;transition:.15s}
-.seg button.on{background:#fff;color:var(--blue-deep);box-shadow:var(--shadow-sm)}
-.signal-card{margin:14px 20px 0;overflow:hidden}
-.signal-head{padding:14px 15px 12px;border-bottom:1px dashed var(--line)}
-.signal-head .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.signal-head h3{font-family:var(--font-display);font-weight:800;font-size:15px;line-height:1.3;flex:1}
-.signal-head .meta{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.senti{margin-top:11px}
-.senti .lab{display:flex;justify-content:space-between;font-size:10px;font-weight:800;color:var(--ink-soft);margin-bottom:5px}
-.senti .lab b{color:var(--coral-deep)}
-.senti .bar{height:7px;border-radius:99px;background:#EDF1F8;overflow:hidden;display:flex}
-.senti .bar i{height:100%}
-.post{display:flex;gap:10px;padding:11px 15px;border-bottom:1px solid var(--line)}
-.post:last-of-type{border-bottom:none}
-.post .pav{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800}
-.post .tx{flex:1;min-width:0}
-.post .who{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800}
-.post .who span{color:var(--ink-faint);font-weight:600}
-.post .who svg{margin-left:auto;flex:none}
-.post p{font-size:11.5px;line-height:1.5;font-weight:600;color:var(--ink-soft);margin-top:3px}
-.signal-foot{padding:13px 15px;display:flex;gap:9px;background:var(--blue-wash-2)}
-.signal-foot button{flex:1;padding:11px;border-radius:11px;font-size:11.5px;font-weight:800;border:none}
-.signal-foot .yes{background:var(--blue);color:#fff}
-.signal-foot .yes:hover{background:var(--blue-deep)}
-.signal-foot .no{background:#fff;color:var(--ink-soft);border:1.5px solid var(--line)}
-.hitl-note{margin:14px 20px 0;display:flex;gap:11px;align-items:flex-start;background:var(--violet-wash);
-  border:1px solid #DCD2FA;border-radius:var(--r-sm);padding:12px 13px}
-.hitl-note p{font-size:11px;line-height:1.55;font-weight:600;color:#4A34B8}
-.hitl-note b{font-weight:800}
+.frow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:9px;gap:12px}
+.frow:last-of-type{border:0}
+.frow small{color:var(--muted);font-weight:500}
+.frow b{font-weight:700;text-align:right}
 
-/* ============ S8 transparansi ============ */
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:13px 14px;box-shadow:var(--shadow-sm)}
-.kpi .v{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:.2px}
-.kpi .v small{font-size:12px;font-weight:700;color:var(--ink-faint)}
-.kpi .l{font-size:10px;font-weight:700;color:var(--ink-soft);margin-top:3px;line-height:1.4}
-.kpi .delta{font-size:9.5px;font-weight:800;margin-top:6px;display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:999px}
-.up{background:var(--green-wash);color:var(--green-deep)}
-.down{background:var(--coral-wash);color:var(--coral-deep)}
+.reveal-lock{padding:11px 13px;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#FFF8EC,#FFF1E0);border:1px solid #F4DFC2}
+.reveal-lock .lk{width:32px;height:32px;border-radius:11px;background:#fff;display:grid;place-items:center;box-shadow:0 4px 10px -4px rgba(0,0,0,.15);flex:0 0 auto}
+.reveal-lock .lk svg{width:15px;height:15px}
+.reveal-lock b{font-size:9.5px;font-weight:700;display:block}
+.reveal-lock small{font-size:7.5px;color:#A5834C;line-height:1.4;display:block}
 
-.agency-rank{padding:15px}
-.ar-row{display:flex;align-items:center;gap:11px;padding:9px 0}
-.ar-row + .ar-row{border-top:1px dashed var(--line)}
-.ar-row .nm{width:118px;flex:none}
-.ar-row .nm b{font-size:11.5px;font-weight:800;display:block;line-height:1.25}
-.ar-row .nm span{font-size:9.5px;font-weight:600;color:var(--ink-faint)}
-.ar-row .track{flex:1;height:9px;border-radius:99px;background:#EDF1F8;overflow:hidden}
-.ar-row .track i{display:block;height:100%;border-radius:99px}
-.ar-row .pct{width:38px;text-align:right;font-size:11.5px;font-weight:800;flex:none}
-.heat{padding:15px}
-.heat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
-.heat-grid i{aspect-ratio:1;border-radius:6px;background:var(--blue);display:block}
-.heat .lg{display:flex;align-items:center;gap:6px;justify-content:flex-end;margin-top:9px;font-size:9.5px;font-weight:700;color:var(--ink-soft)}
-.heat .lg i{width:10px;height:10px;border-radius:3px;background:var(--blue)}
-.esc-callout{margin:14px 20px 0;display:flex;gap:11px;align-items:center;background:var(--coral-wash);
-  border:1px solid #F4CCC2;border-radius:var(--r-sm);padding:12px 13px}
-.esc-callout p{font-size:11.5px;font-weight:700;color:var(--coral-deep);line-height:1.5;flex:1}
-.esc-callout b{font-weight:800}
-.open-note{margin:12px 20px 0;font-size:10.5px;font-weight:600;color:var(--ink-faint);text-align:center;line-height:1.6}
+.rfq-doc{margin:12px 16px 0;padding:13px;border:1.5px dashed #C9D6E2;border-radius:14px;background:#FBFDFE;text-align:left}
+.rfq-doc .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.rfq-doc .hd b{font-size:11px;font-weight:800;color:var(--navy)}
+.rfq-doc .hd span{font-size:7.5px;color:var(--muted);font-weight:600}
 
-/* ============ S9 profil ============ */
-.pf-hero{position:relative;padding:62px 20px 58px;color:#fff;border-radius:0 0 30px 30px;
-  background:linear-gradient(150deg,#1A56D6,#2E7BF0)}
-.pf-hero::before{content:"";position:absolute;inset:0;border-radius:0 0 30px 30px;pointer-events:none;
-  background:repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px 34px),
-             repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 34px)}
-.pf-top{position:relative;display:flex;gap:13px;align-items:center}
-.pf-top .avatar{width:58px;height:58px;border-radius:19px}
-.pf-top h2{font-family:var(--font-display);font-weight:800;font-size:19px}
-.pf-top .vloc{font-size:11px;font-weight:600;color:#D3E3FF;margin-top:2px}
-.pf-top .vbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;margin-top:6px;
-  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:4px 10px;border-radius:999px}
-.trust-card{margin:-34px 20px 0;position:relative;z-index:3;padding:16px;display:flex;gap:16px;align-items:center}
-.ring{width:88px;height:88px;flex:none;position:relative;display:grid;place-items:center}
-.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
-.ring .num{font-family:var(--font-display);font-weight:800;font-size:25px;color:var(--green-deep)}
-.trust-card .tx b{font-size:14px;font-weight:800;display:block}
-.trust-card .tx p{font-size:11px;font-weight:600;color:var(--ink-soft);margin-top:4px;line-height:1.55}
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:12px 8px;text-align:center;box-shadow:var(--shadow-sm)}
-.stat .v{font-family:var(--font-display);font-weight:800;font-size:19px}
-.stat .l{font-size:9.5px;font-weight:700;color:var(--ink-soft);margin-top:2px}
-.badge-row{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px}
-.badge-row::-webkit-scrollbar{display:none}
-.medal{flex:0 0 108px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
-  padding:12px 9px;text-align:center;box-shadow:var(--shadow-sm)}
-.medal .mi{width:42px;height:42px;margin:0 auto 7px;border-radius:50%;display:grid;place-items:center}
-.medal b{font-size:10.5px;font-weight:800;display:block;line-height:1.3}
-.medal span{font-size:8.5px;font-weight:600;color:var(--ink-faint);display:block;margin-top:2px;line-height:1.35}
-.setting{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
-.set-row{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:1px solid var(--line)}
-.set-row:last-child{border-bottom:none}
-.set-row .si{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;background:var(--blue-wash)}
-.set-row .tx{flex:1}
-.set-row b{font-size:12.5px;font-weight:800;display:block}
-.set-row p{font-size:10px;font-weight:600;color:var(--ink-soft);margin-top:1px}
+.contact-card{margin:14px 16px 0;padding:15px;text-align:center}
+.contact-card .pf{width:56px;height:56px;border-radius:50%;background:#FFF1E4;display:grid;place-items:center;font-size:25px;margin:0 auto 8px;border:3px solid var(--teal-soft)}
+.contact-card h3{font-size:13px;font-weight:800}
 
-/* footer stage */
-.stage-foot{position:relative;z-index:2;margin-top:26px;text-align:center;color:rgba(220,233,255,.75);font-size:11.5px;font-weight:600;line-height:1.7;max-width:560px}
-.stage-foot b{color:#fff}
-@media(max-width:440px){
-  .device{transform:scale(.88);transform-origin:top center}
-  body{padding-bottom:0}
+.crow{display:flex;align-items:center;gap:9px;background:#F7FAFB;border:1px solid var(--line);border-radius:11px;padding:9px 11px;margin-top:8px;text-align:left}
+.crow svg{width:14px;height:14px;flex:0 0 auto}
+.crow small{font-size:7.5px;color:var(--muted);display:block;font-weight:500}
+.crow b{font-size:9.5px;font-weight:700}
+
+/* ============ NOTIFICATION / PROFILE ============ */
+.nrow{display:flex;gap:10px;padding:11px 12px;margin-bottom:9px;text-align:left;width:100%}
+.nrow .em{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-size:15px;flex:0 0 auto}
+.nrow b{font-size:9.5px;font-weight:700;display:block;line-height:1.4}
+.nrow p{font-size:8.5px;color:var(--muted);line-height:1.5;margin-top:1px}
+.nrow time{font-size:7px;color:#B3BEC9;font-weight:600;margin-left:auto;flex:0 0 auto}
+
+/* Cohesive Profile Layout with inside-body scroll to prevent clipping */
+.prof-hero{background:var(--grad);color:#fff;padding:48px 16px 40px;border-radius:0 0 26px 26px;text-align:center;position:relative}
+.prof-hero .pf{width:62px;height:62px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:28px;margin:6px auto 8px;border:3px solid var(--gold)}
+.prof-hero h3{font-size:14px;font-weight:800}
+.prof-hero p{font-size:8.5px;opacity:.85;margin-top:2px}
+
+.prof-stats{margin:14px 16px;padding:12px;display:flex;position:relative;z-index:5}
+.prof-stats div{flex:1;text-align:center;border-right:1px solid var(--line)}
+.prof-stats div:last-child{border:0}
+.prof-stats b{font-size:14px;font-weight:800;color:var(--navy);display:block}
+.prof-stats small{font-size:7.5px;color:var(--muted);font-weight:500}
+
+@media (max-width:760px){
+  .wrap{flex-direction:column;align-items:center;gap:26px}
+  .panel{width:min(92vw,340px);order:2}
 }
-/* mode screenshot bersih */
-body.bare{padding:22px 18px}
-body.bare .stage-head,body.bare .navrail,body.bare .stage-foot{display:none}
+@media (prefers-reduced-motion:reduce){
+  .ali-big,.scr.on,.scr.leaving,.scr.on .fx,.scr.on .bar i,.scr.on .score-ring circle:last-of-type,.msg.pop,.offer.pop{animation:none !important}
+  .scr.on .fx{opacity:1}
+  .mpop,.mpop>*,.toast,button{transition:none !important}
+  .mpop>*{opacity:1;transform:none}
+}
 </style>
 </head>
 <body>
 
-<!-- ================= STAGE HEAD ================= -->
-<header class="stage-head">
-  <div class="wordmark">
-    <div class="glyph">
-      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
-        <path d="M15 3C10 3 6 7 6 12c0 6.4 7.2 12.9 8.4 14 .35.3.85.3 1.2 0C16.8 24.9 24 18.4 24 12c0-5-4-9-9-9z" fill="#1F6BF2"/>
-        <path d="M11.2 12.4l2.6 2.6 5-5.2" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <h1>BENA<span>HI</span></h1>
-  </div>
-  <div class="tagline">Lapor. Kawal. Pastikan Nyata.</div>
-  <p class="lead">Prototipe platform pelaporan infrastruktur publik yang <b>tidak berhenti di klaim "selesai"</b>. Setiap perbaikan wajib dibuktikan oleh <b>warga sekitar lokasi</b>, dan keluhan di media sosial ikut terjaring lewat analisis sentimen.</p>
-  <div class="status-legend" aria-label="Legenda status laporan">
-    <span><i style="background:#5EA1F9"></i>Dilaporkan</span>
-    <span><i style="background:#F2A118"></i>Ditindaklanjuti</span>
-    <span><i style="background:#B79CFF"></i>Menunggu Verifikasi</span>
-    <span><i style="background:#4FDCA8"></i>Selesai Terverifikasi</span>
-    <span><i style="background:#FF7A64"></i>Dieskalasi</span>
-  </div>
-</header>
+<!-- svg defs -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="ali">
+      <ellipse cx="168" cy="86" rx="13" ry="24" fill="#F27B2F" transform="rotate(38 168 86)"/>
+      <circle cx="180" cy="66" r="10" fill="#FF8A3D"/>
+      <ellipse cx="34" cy="140" rx="12" ry="22" fill="#F27B2F" transform="rotate(-24 34 140)"/>
+      <path d="M100 52 C100 40 100 34 100 30" stroke="#3E9370" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M100 34 C86 30 78 18 82 8 C94 10 102 20 100 34Z" fill="#4FB487"/>
+      <path d="M100 34 C112 28 124 28 130 36 C122 44 108 44 100 34Z" fill="#63C89A"/>
+      <ellipse cx="100" cy="130" rx="66" ry="70" fill="#FF8A3D"/>
+      <ellipse cx="100" cy="152" rx="42" ry="36" fill="#FFE3C7"/>
+      <circle cx="90" cy="156" r="12" fill="none" stroke="#2E8F86" stroke-width="5"/>
+      <circle cx="112" cy="156" r="12" fill="none" stroke="#1E3A5F" stroke-width="5"/>
+      <path d="M101 147 A12 12 0 0 1 101 165" fill="none" stroke="#2E8F86" stroke-width="5"/>
+      <circle cx="74" cy="108" r="14" fill="#fff"/>
+      <circle cx="126" cy="108" r="14" fill="#fff"/>
+      <circle cx="77" cy="110" r="7" fill="#1E3A5F"/>
+      <circle cx="123" cy="110" r="7" fill="#1E3A5F"/>
+      <circle cx="79.5" cy="107.5" r="2.4" fill="#fff"/>
+      <circle cx="125.5" cy="107.5" r="2.4" fill="#fff"/>
+      <path d="M64 92 Q74 87 84 91" stroke="#E56F22" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M116 91 Q126 87 136 92" stroke="#E56F22" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <ellipse cx="58" cy="126" rx="7" ry="4.5" fill="#FFB1A0" opacity=".85"/>
+      <ellipse cx="142" cy="126" rx="7" ry="4.5" fill="#FFB1A0" opacity=".85"/>
+      <path d="M88 128 Q100 138 112 128" stroke="#1E3A5F" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+      <ellipse cx="76" cy="200" rx="15" ry="9" fill="#F27B2F"/>
+      <ellipse cx="124" cy="200" rx="15" ry="9" fill="#F27B2F"/>
+    </g>
+    <g id="jmark">
+      <path d="M14 3 H19 V15 A6.5 6.5 0 0 1 5.5 16.5" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="6.5" cy="6" r="2.2" fill="#FFD27A"/>
+    </g>
+    <g id="sig"><rect x="0" y="7" width="2.5" height="4" rx="1"/><rect x="4" y="5" width="2.5" height="6" rx="1"/><rect x="8" y="3" width="2.5" height="8" rx="1"/><rect x="12" y="1" width="2.5" height="10" rx="1" opacity=".4"/></g>
+    <g id="bat"><rect x="0" y="1.5" width="18" height="9" rx="2.5" fill="none" stroke-width="1.4"/><rect x="2" y="3.5" width="11" height="5" rx="1"/><rect x="19.5" y="4" width="2" height="4" rx="1"/></g>
+    <g id="check"><path d="M2 6.5 L5 9.5 L10.5 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-home"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></g>
+    <g id="i-spark"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M12 8l1.2 2.8L16 12l-2.8 1.2L12 16l-1.2-2.8L8 12l2.8-1.2Z"/></g>
+    <g id="i-chat"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5.1A8 8 0 1 1 21 12Z"/></g>
+    <g id="i-user"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></g>
+    <g id="i-back"><path d="M15 6l-6 6 6 6"/></g>
+  </defs>
+</svg>
 
-<!-- navigator -->
-<nav class="navrail" aria-label="Navigasi layar prototipe">
-  <div class="nav-group">Mulai</div>
-  <button class="chip on" data-go="s-onboard">Pembuka</button>
-  <button class="chip" data-go="s-home">Beranda</button>
-  <div class="nav-group">Alur Lapor</div>
-  <button class="chip" data-go="s-form">Buat Laporan</button>
-  <button class="chip" data-go="s-sent">Terkirim &amp; Routing</button>
-  <button class="chip" data-go="s-detail">Detail &amp; Status</button>
-  <div class="nav-group">Alur Kawal</div>
-  <button class="chip" data-go="s-kawal">Kawal Sekitar</button>
-  <button class="chip" data-go="s-verify">Bandingkan Bukti</button>
-  <button class="chip" data-go="s-sosmed">Sinyal Sosmed</button>
-  <div class="nav-group">Akuntabilitas</div>
-  <button class="chip" data-go="s-dash">Transparansi</button>
-  <button class="chip" data-go="s-profil">Profil Warga</button>
-</nav>
+<div class="brandbar">
+  <div class="mark"><svg viewBox="0 0 24 24"><use href="#jmark"/></svg></div>
+  <b>J<i>ali</i>n</b><span>FoodLink AI · Prototype Interaktif</span>
+</div>
 
-<!-- ================= DEVICE ================= -->
-<div class="device-wrap">
-<div class="device">
-<div class="viewport">
+<div class="wrap">
 
-  <div class="statusbar light" id="statusbar">
-    <span>09.41</span>
-    <span class="r">
-      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".35"/></svg>
-      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" aria-hidden="true"><path d="M8 9.5a1.6 1.6 0 100 3.2 1.6 1.6 0 000-3.2zM8 5c-1.9 0-3.6.75-4.9 1.96l1.4 1.45A5 5 0 018 7c1.35 0 2.58.52 3.5 1.4l1.4-1.44A6.97 6.97 0 008 5zM8 .5C5 .5 2.3 1.7.3 3.63l1.4 1.45A9.47 9.47 0 018 2.5c2.44 0 4.66.92 6.3 2.58l1.4-1.45A11.44 11.44 0 008 .5z"/></svg>
-      <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x=".5" y=".5" width="20" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="14" height="8" rx="1.6" fill="currentColor"/><path d="M22 4v4c1 0 1.8-.9 1.8-2S23 4 22 4z" fill="currentColor" opacity=".5"/></svg>
-    </span>
-  </div>
+<!-- ======================= PHONE FRAME ======================= -->
+<div class="phone" id="phone">
+  <div class="notch"></div>
+  <div class="toast" id="toast"></div>
 
-  <!-- ============ S0 · ONBOARDING ============ -->
-  <section class="screen active" id="s-onboard" data-status="light">
-    <div class="ob-wrap">
-      <div class="ob-logo">
-        <svg width="40" height="40" viewBox="0 0 30 30" fill="none" aria-hidden="true">
-          <path d="M15 3C10 3 6 7 6 12c0 6.4 7.2 12.9 8.4 14 .35.3.85.3 1.2 0C16.8 24.9 24 18.4 24 12c0-5-4-9-9-9z" fill="#1F6BF2"/>
-          <path d="M11.2 12.4l2.6 2.6 5-5.2" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+  <!-- ========== 1 SPLASH SCREEN ========== -->
+  <section class="scr on" id="scr-splash">
+    <div class="sb light" style="position:absolute;top:0;left:0;right:0"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#fff"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#fff" stroke="#fff"><use href="#bat"/></svg></span></div>
+    <div class="splash">
+      <span class="halo"></span><span class="halo h2"></span>
+      <svg class="ali-big" viewBox="0 0 200 220"><use href="#ali"/></svg>
+      <div class="wordmark">
+        <h1>J<span class="ali-name">ali</span>n</h1>
+        <p>Jalin Mitra, Tumbuh Bersama</p>
       </div>
-      <h2>Laporanmu<br/>harus <em>selesai</em>,<br/>bukan diklaim selesai.</h2>
-      <p class="ob-tag">Lapor. Kawal. Pastikan Nyata.</p>
-      <div class="ob-points">
-        <div class="ob-point">
-          <div class="ic">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg>
-          </div>
-          <div><b>Lapor dalam 60 detik</b><p>Foto, lokasi otomatis, kategori disarankan dari gambar. Selesai.</p></div>
-        </div>
-        <div class="ob-point">
-          <div class="ic">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h9"/><path d="M18 15l3 3-3 3"/></svg>
-          </div>
-          <div><b>Langsung ke instansi yang tepat</b><p>Routing otomatis berdasarkan kategori dan wilayah kewenangan, dengan batas waktu (SLA) yang jelas.</p></div>
-        </div>
-        <div class="ob-point">
-          <div class="ic">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-          <div><b>Warga yang menutup laporan</b><p>Status "selesai" hanya sah setelah warga sekitar membuktikannya di lapangan.</p></div>
-        </div>
-      </div>
-      <div class="ob-cta">
-        <button class="btn btn-primary" data-go="s-home">Mulai Melapor</button>
-        <button class="alt" data-go="s-dash">Lihat <u>dashboard transparansi</u> tanpa akun</button>
-      </div>
+      <button class="start-btn" onclick="go('scr-role')">Mulai Sekarang</button>
     </div>
   </section>
 
-  <!-- ============ S1 · BERANDA ============ -->
-  <section class="screen" id="s-home" data-status="light" data-nav="home">
-    <div class="body has-nav">
-      <div class="home-hero">
-        <div class="home-top">
-          <div class="avatar">
-            <svg viewBox="0 0 46 46" width="46" height="46" aria-hidden="true"><rect width="46" height="46" fill="#FFD873"/><circle cx="23" cy="18" r="8" fill="#8A5A2B"/><path d="M8 46c0-9 6.7-15 15-15s15 6 15 15z" fill="#1F6BF2"/><circle cx="23" cy="18" r="8" fill="none"/></svg>
-          </div>
-          <div class="who">
-            <div class="hi">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFD873" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3L17 7M7 17l-1.7 1.7"/></svg>
-              Selamat pagi
-            </div>
-            <div class="name">Raka Pramudya</div>
-            <span class="loc-chip">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8 2 5 5 5 9c0 5.2 5.8 10.4 6.8 11.2.1.1.3.1.4 0C13.2 19.4 19 14.2 19 9c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
-              Kel. Palmerah, Jakarta Barat
-            </span>
-          </div>
-          <button class="bell" aria-label="Notifikasi, 1 belum dibaca">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 01-3.4 0"/></svg>
-            <i class="dot"></i>
-          </button>
-        </div>
-        <div class="searchbar" role="search">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#93A2BE" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-          <span>Cari laporan, alamat, atau instansi</span>
-        </div>
-        <div class="hero-stat">
-          <span><b>38</b> laporan aktif di kelurahanmu</span>
-          <span><b>2</b> menunggu kawalanmu</span>
-        </div>
+  <!-- ========== 2 REGISTER / ROLE ========== -->
+  <section class="scr" id="scr-role">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="body pad">
+      <div style="text-align:center;padding:18px 0 10px">
+        <svg style="width:66px;height:74px" viewBox="0 0 200 220"><use href="#ali"/></svg>
+        <h2 style="font-size:15px;font-weight:800;margin-top:4px">Halo! Aku <span style="color:var(--orange)">Ali</span> 👋</h2>
+        <p style="font-size:9px;color:var(--muted);margin-top:3px;line-height:1.55">Daftar dulu yuk. Kamu mau bergabung<br>sebagai siapa di Jalin?</p>
       </div>
-
-      <div class="section">
-        <div class="section-head"><h3>Lapor Apa Hari Ini?</h3><button data-go="s-form">Semua Kategori</button></div>
-        <div class="cat-row">
-          <button class="cat" data-go="s-form">
-            <div class="tile t-blue">
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M6 22L10 4h6l4 18" stroke="#1F6BF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 7v2.5M13 13v2.5M13 19v2.5" stroke="#1F6BF2" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 4.5"/><ellipse cx="17.5" cy="19.5" rx="3.5" ry="2.2" fill="#13294B"/></svg>
-            </div>
-            <span>Jalan Rusak</span>
-          </button>
-          <button class="cat" data-go="s-form">
-            <div class="tile t-amber">
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M8 23V6a3 3 0 013-3h1a3 3 0 013 3v1" stroke="#C97E06" stroke-width="2" stroke-linecap="round"/><circle cx="17.5" cy="9.5" r="3.5" fill="#F2A118"/><path d="M15 12l5-5" stroke="#7A5104" stroke-width="1.8" stroke-linecap="round"/><path d="M5.5 23h5" stroke="#C97E06" stroke-width="2" stroke-linecap="round"/></svg>
-            </div>
-            <span>Lampu Jalan</span>
-          </button>
-          <button class="cat" data-go="s-form">
-            <div class="tile t-teal">
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><rect x="4" y="10" width="18" height="10" rx="2" stroke="#0F9BAA" stroke-width="2"/><path d="M8 10v10M13 10v10M18 10v10" stroke="#0F9BAA" stroke-width="1.6"/><path d="M5 6.5c1.5-1.4 3-1.4 4.5 0s3 1.4 4.5 0 3-1.4 4.5 0" stroke="#0F9BAA" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </div>
-            <span>Drainase</span>
-          </button>
-          <button class="cat" data-go="s-form">
-            <div class="tile t-green">
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M6 8h14l-1.5 13a2 2 0 01-2 1.8h-7A2 2 0 017.5 21z" stroke="#0E7C55" stroke-width="2" stroke-linejoin="round"/><path d="M4 8h18M10 8V5.6A1.6 1.6 0 0111.6 4h2.8A1.6 1.6 0 0116 5.6V8" stroke="#0E7C55" stroke-width="2" stroke-linecap="round"/><path d="M10.5 12.5v6M15.5 12.5v6" stroke="#189A6C" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </div>
-            <span>Sampah</span>
-          </button>
-        </div>
+      <div style="margin-top:12px">
+        <button class="rolecard" onclick="setRole('producer');go('scr-profile')">
+          <span class="em" style="background:#EAF6EF">🧑‍🌾</span>
+          <span><b>Produsen</b><small>Petani, nelayan, UMKM olahan — posting suplai &amp; temukan pembeli.</small></span>
+          <span class="arr">›</span>
+        </button>
+        <button class="rolecard" onclick="setRole('buyer');go('scr-profile')">
+          <span class="em" style="background:#EAF3FF">🏪</span>
+          <span><b>Pembeli</b><small>Restoran, hotel, katering, ritel — posting kebutuhan &amp; temukan produsen.</small></span>
+          <span class="arr">›</span>
+        </button>
       </div>
-
-      <div class="section">
-        <div class="section-head"><h3>Laporan Aktifmu</h3><button data-go="s-detail">Riwayat</button></div>
-        <div class="card report-card">
-          <div class="top">
-            <div class="thumb">
-              <svg viewBox="0 0 56 56" aria-hidden="true"><rect width="56" height="56" fill="#8D96A8"/><path d="M0 8h56M0 48h56" stroke="#6E7789" stroke-width="5"/><path d="M28 12v8M28 26v8M28 40v8" stroke="#E8DFC8" stroke-width="3" stroke-dasharray="5 6"/><path d="M14 30c3-2 7-3 10 0s2 7-2 8-9-1-10-4 0-3 2-4z" fill="#3B4252"/></svg>
-            </div>
-            <div class="info">
-              <div class="title">Jalan berlubang · Jl. Kutilang</div>
-              <div class="sub">Dinas Bina Marga Jakarta Barat</div>
-            </div>
-            <span class="badge b-amber">Ditindaklanjuti</span>
-          </div>
-          <div class="row2">
-            <div class="stepdots" aria-label="Progres 3 dari 5 tahap"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i></div>
-            <span class="sla">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 2M9 2.5h6"/></svg>
-              SLA sisa 4 hari
-            </span>
-          </div>
-          <div class="cta">
-            <button class="see" data-go="s-detail">Lihat Status</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section" style="padding:0">
-        <div class="section-head" style="padding:0 20px"><h3>Butuh Kawalanmu</h3><button data-go="s-kawal">Lihat Peta</button></div>
-        <div class="kawal-scroll">
-          <article class="kawal-card">
-            <div class="ph">
-              <svg viewBox="0 0 218 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="218" height="96" fill="#25315E"/><rect y="70" width="218" height="26" fill="#39456F"/><path d="M60 70V18" stroke="#7C87A8" stroke-width="5" stroke-linecap="round"/><path d="M60 18h28" stroke="#7C87A8" stroke-width="4" stroke-linecap="round"/><ellipse cx="92" cy="20" rx="8" ry="6" fill="#55618A"/><path d="M86 14l12 12M98 14L86 26" stroke="#FF7A64" stroke-width="2.4" stroke-linecap="round"/><circle cx="170" cy="24" r="9" fill="#FFE9A8" opacity=".25"/></svg>
-              <span class="dist">220 m darimu</span>
-            </div>
-            <div class="pad">
-              <div class="t">PJU mati 3 titik, Jl. Merpati Raya</div>
-              <div class="m">Dishub klaim selesai · 2 jam lalu</div>
-              <div class="foot">
-                <span class="quorum"><span class="q"><i class="f"></i><i></i><i></i></span>1/3</span>
-                <span class="pts">+15 poin</span>
-                <button class="go" data-go="s-verify">Verifikasi</button>
-              </div>
-            </div>
-          </article>
-          <article class="kawal-card">
-            <div class="ph">
-              <svg viewBox="0 0 218 96" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="218" height="96" fill="#B8C4D4"/><rect y="62" width="218" height="34" fill="#8D96A8"/><path d="M0 79h218" stroke="#E8DFC8" stroke-width="3" stroke-dasharray="10 12"/><path d="M96 62c8-4 20-4 26 2s2 12-8 13-22-3-24-8 2-5 6-7z" fill="#3B4252"/><path d="M150 62l7-14 7 14z" fill="#F2A118" stroke="#C97E06" stroke-width="1.5"/></svg>
-              <span class="dist">450 m darimu</span>
-            </div>
-            <div class="pad">
-              <div class="t">Tambalan jalan, Gg. Melati II</div>
-              <div class="m">Bina Marga klaim selesai · kemarin</div>
-              <div class="foot">
-                <span class="quorum"><span class="q"><i class="f"></i><i class="f"></i><i></i></span>2/3</span>
-                <span class="pts">+15 poin</span>
-                <button class="go" data-go="s-verify">Verifikasi</button>
-              </div>
-            </div>
-          </article>
-        </div>
-      </div>
-
-      <button class="sosmed-strip" data-go="s-sosmed">
-        <span class="ic">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a8 8 0 0114.9-4M21 13a8 8 0 01-14.9 4"/><path d="M18.5 3.5V7H15M5.5 20.5V17H9"/></svg>
-        </span>
-        <span style="flex:1">
-          <b>3 sinyal baru dari X &amp; Threads</b>
-          <p>Warga mengeluh soal genangan di Slipi. Benar terjadi?</p>
-        </span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B9C9EF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
-      </button>
-      <div style="height:22px"></div>
+      <p style="font-size:8.5px;color:var(--muted);text-align:center;margin-top:24px">Sudah punya akun? <b style="color:var(--teal)">Masuk</b></p>
     </div>
   </section>
 
-  <!-- ============ S2 · BUAT LAPORAN ============ -->
-  <section class="screen" id="s-form" data-status="dark">
-    <div class="appbar">
-      <button class="back" data-go="s-home" aria-label="Kembali">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#13294B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-      </button>
-      <h2>Buat Laporan</h2>
-      <span class="meta">Langkah 1 dari 2</span>
+  <!-- ========== 3 BUSINESS PROFILE ========== -->
+  <section class="scr" id="scr-profile">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="plainhead">
+      <button class="back" onclick="go('scr-role')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.4"><use href="#i-back"/></svg></button>
+      <h2>Profil Bisnis</h2>
+      <span style="font-size:8.5px;color:var(--muted);font-weight:600">1/2</span>
     </div>
+    <div class="body pad">
+      <div class="field"><label>Nama Perusahaan / Usaha (CompanyName)</label><input id="p-company" value="UD Berkah Pangan"></div>
+      <div class="field"><label>Nomor Telepon / WA (Phone)</label><input id="p-phone" value="0812-2043-8871"></div>
+      <div class="grid2">
+        <div class="field"><label>Kota / Kabupaten (City)</label><input id="p-city" value="Bandung, Jawa Barat"></div>
+        <div class="field"><label>Jenis Usaha (BusinessType)</label>
+          <select id="p-type">
+            <option>Distributor Bahan Pangan</option>
+            <option>Restoran / Katering</option>
+            <option>Petani / Kelompok Tani</option>
+            <option>UMKM Pengolah</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Kategori Produk (ProductCategory)</label><input id="p-category" value="Cabai Merah, Bawang Merah, Tomat"></div>
+      <div class="grid2">
+        <div class="field"><label>Kapasitas (Capacity)</label><input id="p-capacity" value="2 ton / bulan"></div>
+        <div class="field"><label>Min. Order (MOQ)</label><input id="p-moq" value="50 kg"></div>
+      </div>
+      <div class="field"><label>Sertifikasi (Certifications)</label><input id="p-certs" value="Sertifikat Halal ID3211000, P-IRT"></div>
+      <div class="grid2">
+        <div class="field"><label>Area Pengiriman (DeliveryArea)</label><input id="p-delivery" value="Bandung Raya & Jabodetabek"></div>
+        <div class="field"><label>Ketersediaan (Availability)</label><input id="p-avail" value="Senin - Sabtu (08:00 - 17:00)"></div>
+      </div>
+      
+      <!-- Privacy Concern Consent Box -->
+      <div class="card" style="padding:11px; background:#FFF9EC; border:1px solid #FFE4B3; margin: 8px 0 14px; display:flex; gap:8px; align-items:flex-start">
+        <input type="checkbox" id="p-consent" checked style="margin-top:2px; transform:scale(1.15); cursor:pointer">
+        <label for="p-consent" style="font-size:8.5px; line-height:1.4; color:#7A5515; font-weight:500; cursor:pointer; text-align:left">
+          Saya mengizinkan Jalin untuk <b>mengungkapkan nomor telepon dan email</b> usaha saya kepada mitra <b>hanya ketika kesepakatan bersama tercapai</b>.
+        </label>
+      </div>
+
+      <button class="btn btn-navy" style="width:100%;height:38px;font-size:10.5px;margin-bottom:18px" onclick="saveProfileAndContinue()">Simpan &amp; Lanjut</button>
+    </div>
+  </section>
+
+  <!-- ========== 4 NIB VERIFICATION ========== -->
+  <section class="scr" id="scr-nib">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="plainhead">
+      <button class="back" onclick="go('scr-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.4"><use href="#i-back"/></svg></button>
+      <h2>Verifikasi NIB <span style="font-size:8px;color:var(--muted);font-weight:600">(opsional)</span></h2>
+      <span style="font-size:8.5px;color:var(--muted);font-weight:600">2/2</span>
+    </div>
+    <div class="body pad">
+      <div class="nib-illu" id="nibIntro">
+        <svg class="ali-mini" viewBox="0 0 200 220"><use href="#ali"/></svg>
+        <p style="font-size:9.5px;color:var(--muted);line-height:1.6;margin-top:6px">Verifikasi Nomor Induk Berusaha membuat profilmu<br>mendapat lencana <b style="color:#2E8F5B">✓ NIB Terverifikasi</b> dan<br>lebih dipercaya calon mitra bisnis.</p>
+        <div class="field" style="margin-top:14px"><label>Masukkan Nomor Induk Berusaha (NIB)</label><input id="nibNum" value="1309 2200 4517 88"></div>
+        <button class="btn btn-navy" id="nibBtn" style="width:100%;height:38px;font-size:10.5px;margin-top:10px" onclick="verifyNib()">Verifikasi Sekarang</button>
+      </div>
+
+      <!-- Verified State Display -->
+      <div class="nib-state" id="nibDone">
+        <div class="ok" style="background:#EAF6EF;"><svg viewBox="0 0 12 12" style="color:#2E8F5B"><use href="#check"/></svg></div>
+        <b style="font-size:13px;font-weight:800;color:#2E8F5B">NIB Berhasil Terverifikasi!</b>
+        <p style="font-size:8.5px;color:var(--muted);margin-top:3px;margin-bottom:14px">Data legalitas usaha Anda telah tervalidasi secara resmi.</p>
+        
+        <!-- Summary Box (No file uploads required) -->
+        <div class="card" style="padding:13px; text-align:left; background:#F4FBF7; border: 1px solid #D1EFE0; margin-bottom:16px;">
+          <div style="font-size:7.5px; font-weight:700; color:#2E8F5B; margin-bottom:4px; letter-spacing:0.5px">DATA LEGALITAS KEMENTERIAN INVESTASI</div>
+          <div style="font-size:11px; font-weight:700; color:var(--navy)" id="nibResultCompany">UD Berkah Pangan</div>
+          <div style="font-size:9px; color:var(--muted); margin-top:2px;">NIB: <b id="nibResultVal" style="color:var(--ink)">1309 2200 4517 88</b></div>
+          <div style="font-size:8.5px; color:#2E8F5B; font-weight:600; margin-top:8px; display:flex; align-items:center; gap:4px">
+            <svg viewBox="0 0 12 12" style="width:10px; height:10px; fill:currentColor"><use href="#check"/></svg> Status Terdaftar: Aktif (OSS)
+          </div>
+        </div>
+
+        <button class="btn btn-navy" style="width:100%;height:38px;font-size:10.5px" onclick="go('scr-home')">Lanjut ke Beranda →</button>
+      </div>
+      
+      <button id="skipNibBtn" style="width:100%;background:none;border:0;color:var(--muted);font-size:9px;font-weight:600;margin-top:14px" onclick="go('scr-home')">Lewati dulu, verifikasi nanti</button>
+    </div>
+  </section>
+
+  <!-- ========== 5 HOME / DASHBOARD ========== -->
+  <section class="scr" id="scr-home">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
     <div class="body">
-      <div class="section">
-        <div class="f-label">Bukti Foto <span class="req">*</span></div>
-        <div class="upload">
-          <div class="shot">
-            <svg viewBox="0 0 74 74" aria-hidden="true"><rect width="74" height="74" fill="#8D96A8"/><path d="M0 12h74M0 62h74" stroke="#6E7789" stroke-width="6"/><path d="M37 16v10M37 32v10M37 48v10" stroke="#E8DFC8" stroke-width="4" stroke-dasharray="6 8"/><path d="M18 40c4-3 10-4 14 0s3 9-3 10-12-1-13-5 0-3 2-5z" fill="#3B4252"/><path d="M52 56l5-10 5 10z" fill="#F2A118" stroke="#C97E06" stroke-width="1.6"/></svg>
-            <span class="ok">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>
-            </span>
-          </div>
-          <button class="add" aria-label="Tambah foto lagi">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#1F6BF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            Tambah
-          </button>
-          <p class="note">Foto diambil langsung dari kamera. Lokasi dan waktu terkunci otomatis di metadata.</p>
-        </div>
+      <div class="home-head">
+        <span class="avatar">👩🏻‍🌾</span>
+        <div class="who"><small>Selamat datang! 👋</small><b id="homeUserName">Bu Sari — UD Berkah <span class="badge-nib" id="homeNib" style="display:none"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB</span></b></div>
+        <button class="bell" onclick="go('scr-notif')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2"><path d="M18 9a6 6 0 1 0-12 0c0 6-2.5 7-2.5 7h17S18 15 18 9M10 20a2.2 2.2 0 0 0 4 0"/></svg><i></i></button>
       </div>
+      <div class="pad">
+        <button class="cta" onclick="go('scr-post')">
+          <svg class="ali-mini" viewBox="0 0 200 220"><use href="#ali"/></svg>
+          <span><b class="dyn" data-buyer="Posting Kebutuhan Baru" data-producer="Posting Suplai Baru">Posting Kebutuhan Baru</b><p>Ali akan mencarikan <b><span class="dyn" data-buyer="produsen" data-producer="pembeli">produsen</span> paling cocok</b> begitu kamu memposting.</p></span>
+          <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </button>
 
-      <div class="section">
-        <div class="f-label">Kategori <span class="req">*</span></div>
-        <div class="ai-suggest">
-          <span class="sp">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A5CF0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3z"/><path d="M19 15l.9 2.3 2.1.7-2.1.9L19 21l-.9-2.1-2.1-.9 2.1-.7z"/></svg>
-          </span>
-          <p>Dari fotomu, sistem menyarankan <b>Jalan Berlubang</b>. Ubah bila kurang tepat.</p>
-        </div>
-        <div class="cat-pick" role="radiogroup" aria-label="Pilih kategori">
-          <button class="pick on">Jalan Berlubang</button>
-          <button class="pick">Trotoar Rusak</button>
-          <button class="pick">Drainase Mampet</button>
-          <button class="pick">Rambu Rusak</button>
-          <button class="pick">Lainnya</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="f-label">Lokasi Kejadian <span class="req">*</span></div>
-        <div class="map-box">
-          <svg viewBox="0 0 340 130" aria-hidden="true">
-            <rect width="340" height="130" fill="#EAF1FB"/>
-            <path d="M-10 40H350M-10 92H350" stroke="#fff" stroke-width="13"/>
-            <path d="M80 -10V140M195 -10V140M285 -10V140" stroke="#fff" stroke-width="10"/>
-            <path d="M-10 40H350M-10 92H350" stroke="#D5E1F2" stroke-width="1"/>
-            <path d="M80 -10V140M195 -10V140M285 -10V140" stroke="#D5E1F2" stroke-width="1"/>
-            <rect x="14" y="8" width="52" height="22" rx="4" fill="#DDE9F9"/><rect x="100" y="52" width="80" height="30" rx="4" fill="#DDE9F9"/><rect x="210" y="10" width="60" height="20" rx="4" fill="#D3EBDC"/><rect x="298" y="50" width="36" height="34" rx="4" fill="#DDE9F9"/>
-            <circle cx="195" cy="66" r="30" fill="#1F6BF2" opacity=".12"/>
-            <circle cx="195" cy="66" r="30" fill="none" stroke="#1F6BF2" stroke-width="1.4" stroke-dasharray="4 4"/>
-            <path d="M195 44c-7 0-12 5.4-12 12 0 8.6 9.6 17.2 11.2 18.6.5.4 1.1.4 1.6 0C197.4 73.2 207 64.6 207 56c0-6.6-5-12-12-12z" fill="#1F6BF2" stroke="#fff" stroke-width="2.4"/>
-            <circle cx="195" cy="56" r="4.4" fill="#fff"/>
-          </svg>
-          <span class="map-pin-note">Geser pin bila kurang tepat</span>
-        </div>
-        <div class="addr">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="#1F6BF2" aria-hidden="true"><path d="M12 2C8 2 5 5 5 9c0 5.2 5.8 10.4 6.8 11.2.1.1.3.1.4 0C13.2 19.4 19 14.2 19 9c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
-          <p>Jl. Kutilang No. 12<span>Kel. Palmerah, Kec. Palmerah, Jakarta Barat</span></p>
-          <button>Ubah</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="f-label">Deskripsi Singkat</div>
-        <textarea class="f-input" rows="3" aria-label="Deskripsi laporan">Lubang selebar kira-kira 1 meter di lajur kiri, persis depan SDN 05. Sudah dua motor jatuh minggu ini. Makin dalam kalau hujan.</textarea>
-        <div class="f-help"><span>Ceritakan dampaknya bagi warga</span><span>142/300</span></div>
-      </div>
-
-      <div class="section">
-        <div class="f-label">Tingkat Urgensi <span class="req">*</span></div>
-        <div class="urgency" role="radiogroup" aria-label="Tingkat urgensi">
-          <button class="urg" data-u="1">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0F9BAA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14s1.3 1.8 3.5 1.8S15.5 14 15.5 14"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/></svg>
-            <span>Mengganggu</span><small>Aktivitas terhambat</small>
-          </button>
-          <button class="urg on" data-u="2">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C97E06" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2.5 20h19z"/><path d="M12 10v4M12 17.2v.3"/></svg>
-            <span>Berbahaya</span><small>Berisiko kecelakaan</small>
-          </button>
-          <button class="urg" data-u="3">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C23A26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>
-            <span>Darurat</span><small>Butuh aksi hari ini</small>
-          </button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="anon-row">
-          <div class="tx">
-            <b>Lapor sebagai anonim</b>
-            <p>Identitasmu disembunyikan. Bobot kepercayaan laporan sedikit lebih rendah dibanding akun terverifikasi.</p>
-          </div>
-          <button class="toggle" id="anonToggle" role="switch" aria-checked="false" aria-label="Lapor sebagai anonim"></button>
-        </div>
-        <div class="dup-hint">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C97E06" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.2v.3"/></svg>
-          <p><b>1 laporan serupa</b> ditemukan dalam radius 150 m. Laporanmu akan digabung sebagai <b>dukungan</b> agar tidak terhitung ganda.</p>
-        </div>
-      </div>
-
-      <div class="section" style="margin-bottom:24px">
-        <button class="btn btn-primary" data-go="s-sent">
-          Kirim Laporan
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+        <div class="sec-h"><b>Rekomendasi Ali untukmu</b><button onclick="go('scr-match')">Semua</button></div>
+        
+        <!-- Clean Recommendation cards without percentage score (as requested) -->
+        <button class="card mcard" onclick="go('scr-match')">
+          <span class="top"><span class="logo">🌶️</span><span><b>CV Tani Makmur</b><span class="badge-nib"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB</span></span></span>
+          <span class="foot" style="margin-top:9px"><span class="chip">Cabai Merah</span><span class="chip">500 kg/mgg</span><span class="chip">Garut</span></span>
+        </button>
+        <button class="card mcard" onclick="go('scr-match')" style="margin-bottom:16px">
+          <span class="top"><span class="logo" style="background:#EAF6EF">🐟</span><span><b>Mina Laut Sejahtera</b><span class="badge-nib"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB</span></span></span>
+          <span class="foot" style="margin-top:9px"><span class="chip">Tuna Beku</span><span class="chip">Indramayu</span></span>
         </button>
       </div>
     </div>
+    <div class="nav">
+      <button class="on" onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-home"/></svg>Beranda</button>
+      <button onclick="go('scr-match')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-spark"/></svg>Match</button>
+      <button onclick="go('scr-post')"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button>
+      <button onclick="go('scr-chat-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-chat"/></svg>Chat</button>
+      <button onclick="go('scr-profil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-user"/></svg>Profil</button>
+    </div>
   </section>
 
-  <!-- ============ S3 · TERKIRIM & ROUTING ============ -->
-  <section class="screen" id="s-sent" data-status="dark">
+  <!-- ========== 6 POST NEED / SUPPLY ========== -->
+  <section class="scr" id="scr-post">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="plainhead">
+      <button class="back" onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.4"><use href="#i-back"/></svg></button>
+      <h2 class="dyn" data-buyer="Posting Kebutuhan" data-producer="Posting Suplai">Posting Kebutuhan</h2>
+    </div>
+    <div class="body pad">
+      <div class="card" style="padding:9px 11px;display:flex;gap:8px;align-items:center;margin-bottom:12px;background:#F2FAF8;border-color:#D9EAE6">
+        <svg style="width:34px;height:38px;flex:0 0 auto" viewBox="0 0 200 220"><use href="#ali"/></svg>
+        <p style="font-size:8.5px;line-height:1.55"><b>Tips dari Ali:</b> semakin detail postinganmu, semakin akurat rekomendasi mitranya!</p>
+      </div>
+      <div class="field"><label>Komoditas</label><input value="Cabai Merah Keriting"></div>
+      <div class="grid2">
+        <div class="field"><label>Volume</label><input value="500 kg / minggu"></div>
+        <div class="field"><label>Grade / Kualitas</label><select><option>Grade A</option><option>Grade B</option><option>Campuran</option></select></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Target Harga</label><input value="Rp36.000–38.000 /kg"></div>
+        <div class="field"><label class="dyn" data-buyer="Mulai Dibutuhkan" data-producer="Siap Kirim Mulai">Mulai Dibutuhkan</label><input value="Agustus 2026"></div>
+      </div>
+      <div class="field"><label>Catatan</label><textarea rows="2">Butuh pasokan rutin tiap Senin pagi, sortir grade A, kontrak minimal 3 bulan.</textarea></div>
+      <button class="btn btn-navy" style="width:100%;height:38px;font-size:10.5px" onclick="publishPost()">Terbitkan &amp; Minta Rekomendasi Ali ✨</button>
+      <div style="height:14px"></div>
+    </div>
+  </section>
+
+  <!-- ========== 7 AI MATCH ========== -->
+  <section class="scr" id="scr-match">
+    <div class="gradhead">
+      <div class="sb light" style="padding:14px 6px 4px"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#fff"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#fff" stroke="#fff"><use href="#bat"/></svg></span></div>
+      <div class="bar-t">
+        <button class="rnd" onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><use href="#i-back"/></svg></button>
+        <h2>AI Match</h2>
+        <button class="rnd"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      </div>
+      <div class="ali-say">
+        <svg class="ali-mini" viewBox="0 0 200 220"><use href="#ali"/></svg>
+        <div class="bubble">Ali menemukan <b>8 <span class="dyn" data-buyer="produsen" data-producer="pembeli">produsen</span> cocok</b> untuk posting <b>Cabai Merah 2 ton/bulan</b> 🌶️ Tekan <b>Tertarik</b> jika mau lanjut!</div>
+      </div>
+    </div>
     <div class="body">
-      <div class="sent-hero">
-        <div class="check-ring">
-          <span class="in">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>
-          </span>
-        </div>
-        <h2 class="brico">Laporan Terkirim</h2>
-        <span class="no">#BNH-2607-0193</span>
-        <p>Laporanmu lolos cek duplikat dan moderasi, lalu diteruskan otomatis ke instansi yang berwenang.</p>
-      </div>
-
-      <div class="section">
-        <div class="card route-flow">
-          <div class="rf-item">
-            <div class="rf-ic" style="background:var(--blue-wash)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F6BF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
-            </div>
-            <div>
-              <b>Laporanmu</b>
-              <p>Jalan berlubang · Jl. Kutilang No. 12 · Urgensi: Berbahaya</p>
-            </div>
+      <!-- Normal card layout without overlapping negative margin to prevent cut-offs -->
+      <div class="card match-big">
+        <div class="head">
+          <span class="logo">🌶️</span>
+          <div class="nm"><b>CV Tani Makmur</b><small>Produsen · Garut, Jawa Barat</small>
+            <div style="margin-top:4px"><span class="badge-nib"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB Terverifikasi</span></div>
           </div>
-          <div class="rf-item">
-            <div class="rf-ic" style="background:var(--violet-wash)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A5CF0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3z"/><path d="M19 15l.9 2.3 2.1.7-2.1.9L19 21l-.9-2.1-2.1-.9 2.1-.7z"/></svg>
-            </div>
-            <div>
-              <b>Klasifikasi &amp; routing otomatis</b>
-              <p>Kategori: Jalan Berlubang · Ruas jalan kota, bukan nasional · Wilayah: Kec. Palmerah</p>
-            </div>
-          </div>
-          <div class="rf-item">
-            <div class="rf-ic" style="background:var(--blue-wash)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E4FD1" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-5h6v5M9 11h.01M15 11h.01M12 11h.01"/></svg>
-            </div>
-            <div>
-              <b>Dinas Bina Marga Jakarta Barat</b>
-              <p>Instansi berwenang untuk ruas ini. Petugas menerima notifikasi di dashboard resmi.</p>
-              <span class="badge b-blue tag">Diteruskan · 09.02 WIB</span>
-            </div>
-          </div>
-          <div class="rf-item">
-            <div class="rf-ic" style="background:var(--amber-wash)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C97E06" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 2M9 2.5h6"/></svg>
-            </div>
-            <div>
-              <b>Batas tindak lanjut: 7 hari kerja</b>
-              <p>Lewat dari SLA tanpa kabar, laporan otomatis naik ke level pengawas dan ditandai di dashboard publik.</p>
-            </div>
+          <div class="score-ring">
+            <svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="19" fill="none" stroke="#EDF1F4" stroke-width="5"/><circle cx="23" cy="23" r="19" fill="none" stroke="#2E8F86" stroke-width="5" stroke-linecap="round" stroke-dasharray="110 120"/></svg>
+            <b>92%</b>
           </div>
         </div>
+        <div class="kv">
+          <div><small>Komoditas</small><b>Cabai Merah Keriting</b></div>
+          <div><small>Kapasitas</small><b>500 kg / minggu</b></div>
+          <div><small>Estimasi Harga</small><b>Rp38.000 / kg</b></div>
+          <div><small>Grade</small><b>A · Panen Segar</b></div>
+        </div>
+        <div class="mb-actions">
+          <button class="btn btn-ghost" onclick="toast('Dilewati. Ali siapkan match berikutnya…')">Lewati</button>
+          <button class="btn btn-navy" onclick="interested()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="m12 21-8-8a5.4 5.4 0 0 1 8-7.4A5.4 5.4 0 0 1 20 13Z"/></svg>Tertarik</button>
+        </div>
       </div>
+      <div class="card why">
+        <b><svg viewBox="0 0 24 24" fill="none" stroke="#2E8F86" stroke-width="2"><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Kenapa Ali merekomendasikan ini?</b>
+        <p>Lokasi 42 km dari gudangmu, kapasitas sesuai kebutuhan 2 ton/bulan, riwayat kesepakatan 4.8/5 dari 26 mitra, dan profil NIB terverifikasi.</p>
+      </div>
+      <div class="pad" style="margin-top:10px;padding-bottom:16px">
+        <div class="sec-h" style="margin-top:0"><b>Antrian match berikutnya</b></div>
+        <button class="card mcard"><span class="top"><span class="logo" style="background:#EAF3FF">🐟</span><span><b>Mina Laut Sejahtera</b><span class="badge-nib"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB</span></span></span></button>
+        <button class="card mcard" style="margin-bottom:16px"><span class="top"><span class="logo" style="background:#FFF6E4">🍚</span><span><b>Koperasi Beras Sehat</b></span></span></button>
+      </div>
+    </div>
+    <div class="nav">
+      <button onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-home"/></svg>Beranda</button>
+      <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-spark"/></svg>Match</button>
+      <button onclick="go('scr-post')"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button>
+      <button onclick="go('scr-chat-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-chat"/></svg>Chat</button>
+      <button onclick="go('scr-profil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-user"/></svg>Profil</button>
+    </div>
 
-      <div class="section" style="display:flex;flex-direction:column;gap:9px;margin-bottom:24px">
-        <button class="btn btn-primary" data-go="s-detail">Pantau Status Laporan</button>
-        <button class="btn btn-ghost" data-go="s-home">Kembali ke Beranda</button>
+    <!-- Mutual interest overlay -->
+    <div class="overlay" id="matchOverlay">
+      <div class="mpop">
+        <div class="duo"><span class="pfp">👩🏻‍🌾</span><span class="pfp">🌶️</span></div>
+        <svg class="ali-mini" viewBox="0 0 200 220"><use href="#ali"/></svg>
+        <h3>Ini <i>Mutual Match!</i> 🎉</h3>
+        <p><b>CV Tani Makmur</b> juga menandai tertarik pada postinganmu. Minat kalian saling cocok — sekarang kalian bisa mulai bernegosiasi.</p>
+        <button class="btn" onclick="closeOverlay();go('scr-chat')">💬 Mulai Chat Negosiasi</button>
+        <button class="later" onclick="closeOverlay()">Nanti saja</button>
       </div>
     </div>
   </section>
 
-  <!-- ============ S4 · DETAIL & STATUS ============ -->
-  <section class="screen" id="s-detail" data-status="light">
-    <div class="body">
-      <div class="detail-hero">
-        <svg class="scene" viewBox="0 0 392 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <rect width="392" height="250" fill="#9AA3B5"/>
-          <rect y="0" width="392" height="56" fill="#B8C4D4"/>
-          <rect x="24" y="8" width="70" height="48" rx="4" fill="#8FA0B8"/><rect x="110" y="14" width="54" height="42" rx="4" fill="#A3B2C6"/><rect x="290" y="6" width="80" height="50" rx="4" fill="#8FA0B8"/>
-          <rect y="56" width="392" height="194" fill="#8D96A8"/>
-          <path d="M0 76h392M0 232h392" stroke="#6E7789" stroke-width="7"/>
-          <path d="M196 84v22M196 122v22M196 160v22M196 198v22" stroke="#E8DFC8" stroke-width="6" stroke-dasharray="14 18"/>
-          <path d="M120 150c12-9 30-12 42 0s8 22-8 26-34-4-38-13 -2-8 4-13z" fill="#3B4252"/>
-          <path d="M132 152c8-5 20-7 27 1" stroke="#2A3040" stroke-width="3" stroke-linecap="round"/>
-          <path d="M255 196l11-24 11 24z" fill="#F2A118" stroke="#C97E06" stroke-width="2"/>
-          <path d="M258 190h16" stroke="#fff" stroke-width="2.4"/>
-        </svg>
-        <div class="overlay"></div>
-        <button class="back" data-go="s-home" aria-label="Kembali">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#13294B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-        </button>
-        <button class="share" aria-label="Bagikan laporan">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13294B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></svg>
-        </button>
-        <span class="badge b-amber stchip" style="font-size:11px;padding:6px 12px">Sedang Ditindaklanjuti</span>
-      </div>
-
-      <div class="detail-body">
-        <div class="d-title">
-          <h2>Jalan berlubang di depan SDN 05 Palmerah</h2>
-          <div class="d-meta">
-            <span class="badge b-blue">Jalan Berlubang</span>
-            <span class="badge b-coral">Urgensi: Berbahaya</span>
-            <span class="badge b-ghost">#BNH-2607-0193</span>
-          </div>
-          <button class="upvote" id="upvoteBtn" aria-pressed="false">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v11M3 10h4l4.2-7.2a2 2 0 013.6 1.1L14 10h5.4a2 2 0 012 2.3l-1.5 6.5a2 2 0 01-2 1.7H7"/></svg>
-            <span id="upvoteN">27</span> warga terdampak sama
-          </button>
-        </div>
-
-        <div class="card agency">
-          <div class="logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0E4FD1" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-5h6v5M9 11h.01M15 11h.01M12 11h.01"/></svg>
-          </div>
-          <div class="tx">
-            <b>Dinas Bina Marga Jakarta Barat</b>
-            <p>Menerima 12 Jul · SLA 7 hari kerja · sisa 4 hari</p>
-            <div class="sla-bar"><i></i></div>
-          </div>
-        </div>
-
-        <div class="card timeline" aria-label="Riwayat status laporan">
-          <div class="tl-item done">
-            <span class="tl-dot">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>
-            </span>
-            <div class="tx"><b>Baru Dilaporkan</b><time>12 Jul · 08.14</time><p>Laporan masuk dengan 1 foto bukti dan titik lokasi.</p></div>
-          </div>
-          <div class="tl-item done">
-            <span class="tl-dot">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>
-            </span>
-            <div class="tx"><b>Lolos Validasi</b><time>12 Jul · 08.15</time><p>Bukan duplikat, foto relevan, bukan spam. Digabung dengan 1 laporan pendukung.</p></div>
-          </div>
-          <div class="tl-item done">
-            <span class="tl-dot">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>
-            </span>
-            <div class="tx"><b>Diteruskan ke Instansi</b><time>12 Jul · 09.02</time><p>Routing otomatis ke Dinas Bina Marga Jakarta Barat.</p></div>
-          </div>
-          <div class="tl-item now">
-            <span class="tl-dot">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 10v3l2 1.6"/></svg>
-            </span>
-            <div class="tx"><b>Sedang Ditindaklanjuti</b><time>14 Jul · 10.30</time><p>Instansi menjadwalkan perbaikan minggu ini. Bukti pengerjaan akan diunggah petugas.</p></div>
-          </div>
-          <div class="tl-item dim">
-            <span class="tl-dot"></span>
-            <div class="tx"><b>Menunggu Verifikasi Komunitas</b><p>Setelah instansi klaim selesai, 3 warga sekitar diminta membuktikan di lokasi.</p></div>
-          </div>
-          <div class="tl-item dim">
-            <span class="tl-dot"></span>
-            <div class="tx"><b>Selesai Terverifikasi</b><span class="badge b-green tag">Status akhir yang sah</span></div>
-          </div>
-        </div>
-
-        <div class="rule-note">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0B6B49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
-          <p>Laporan ini <b>tidak bisa ditutup sepihak</b>. Klaim "selesai" dari instansi baru sah setelah kuorum <b>3 verifikasi warga</b> terpenuhi.</p>
-        </div>
-        <div style="height:26px"></div>
-      </div>
+  <!-- ========== 8 NOTIFICATIONS ========== -->
+  <section class="scr" id="scr-notif">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="plainhead">
+      <button class="back" onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.4"><use href="#i-back"/></svg></button>
+      <h2>Notifikasi</h2>
+      <button style="background:none;border:0;font-size:8.5px;color:var(--teal);font-weight:600">Tandai dibaca</button>
+    </div>
+    <div class="body pad">
+      <button class="card nrow" onclick="go('scr-match')"><span class="em" style="background:#E4F3F0">💚</span><span style="flex:1"><b>Mutual match baru!</b><p>CV Tani Makmur juga tertarik pada postinganmu.</p></span><time>2 mnt</time></button>
+      <button class="card nrow" onclick="go('scr-chat')"><span class="em" style="background:#EAF3FF">💬</span><span style="flex:1"><b>Penawaran baru diterima</b><p>Rp37.000/kg · 500 kg/minggu · kontrak 3 bulan.</p></span><time>1 jam</time></button>
+      <button class="card nrow" onclick="go('scr-nib')"><span class="em" style="background:#EAF6EF">🛡️</span><span style="flex:1"><b>Verifikasi NIB disetujui</b><p>Profilmu kini menampilkan lencana terverifikasi.</p></span><time>3 jam</time></button>
+      <button class="card nrow" onclick="go('scr-rfq')"><span class="em" style="background:#FFF6E4">📄</span><span style="flex:1"><b>RFQ siap diunduh</b><p>Ringkasan procurement RFQ-2026-0714 telah dibuat.</p></span><time>Kemarin</time></button>
     </div>
   </section>
 
-  <!-- ============ S5 · KAWAL SEKITAR ============ -->
-  <section class="screen" id="s-kawal" data-status="dark" data-nav="kawal">
-    <div class="kw-head">
-      <h2>Kawal Sekitarmu</h2>
-      <p><b>2 permintaan verifikasi</b> dalam radius 500 m dari rutemu</p>
+  <!-- ========== 9 CHAT LIST SCREEN ========== -->
+  <section class="scr" id="scr-chat-list">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="plainhead">
+      <button class="back" onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.4"><use href="#i-back"/></svg></button>
+      <h2>Pesan &amp; Negosiasi</h2>
     </div>
-    <div class="body has-nav">
-      <div class="section">
-        <div class="map-box">
-          <svg viewBox="0 0 340 150" aria-hidden="true">
-            <rect width="340" height="150" fill="#EAF1FB"/>
-            <path d="M-10 46H350M-10 108H350" stroke="#fff" stroke-width="14"/>
-            <path d="M70 -10V160M180 -10V160M275 -10V160" stroke="#fff" stroke-width="11"/>
-            <path d="M-10 46H350M-10 108H350" stroke="#D5E1F2" stroke-width="1"/>
-            <path d="M70 -10V160M180 -10V160M275 -10V160" stroke="#D5E1F2" stroke-width="1"/>
-            <rect x="10" y="8" width="48" height="26" rx="4" fill="#DDE9F9"/><rect x="92" y="60" width="76" height="34" rx="4" fill="#DDE9F9"/><rect x="196" y="8" width="66" height="26" rx="4" fill="#D3EBDC"/><rect x="290" y="58" width="42" height="38" rx="4" fill="#DDE9F9"/>
-            <circle cx="170" cy="78" r="62" fill="#1F6BF2" opacity=".08"/>
-            <circle cx="170" cy="78" r="62" fill="none" stroke="#1F6BF2" stroke-width="1.4" stroke-dasharray="5 5"/>
-            <circle cx="170" cy="78" r="7" fill="#1F6BF2" stroke="#fff" stroke-width="2.5"/>
-            <path d="M124 40c-5.5 0-10 4.3-10 9.6 0 6.9 7.7 13.8 9 14.9.4.3.9.3 1.3 0 1.3-1.1 9-8 9-14.9 0-5.3-4.5-9.6-9.3-9.6z" fill="#F2A118" stroke="#fff" stroke-width="2.2"/>
-            <path d="M236 92c-5.5 0-10 4.3-10 9.6 0 6.9 7.7 13.8 9 14.9.4.3.9.3 1.3 0 1.3-1.1 9-8 9-14.9 0-5.3-4.5-9.6-9.3-9.6z" fill="#F2A118" stroke="#fff" stroke-width="2.2"/>
-          </svg>
-          <span class="map-pin-note">Titik kuning butuh verifikasi</span>
+    <div class="body pad" style="padding-top:4px">
+      <div style="margin-bottom:8px; text-align:left"><small style="font-size:8.5px;font-weight:700;color:var(--muted)">NEGOSIASI AKTIF</small></div>
+      
+      <!-- Primary Chat Item -->
+      <button class="card nrow" onclick="go('scr-chat')" style="width:100%; border-left:3px solid var(--teal)">
+        <span class="em" style="background:#FFF1E4">🌶️</span>
+        <div style="flex:1">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <b>CV Tani Makmur <span class="badge-nib"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB</span></b>
+            <time style="font-size:7px; color:var(--muted)">18:52</time>
+          </div>
+          <p style="font-size:8.5px; color:var(--ink); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; margin-top:2px">Bagaimana bu? Kalau setuju, isi form kesepakatan...</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px">
+            <span style="font-size:7.5px; color:#2E8F5B; font-weight:600">● Online</span>
+            <span style="width:6px; height:6px; background:#FF5A5A; border-radius:50%"></span>
+          </div>
         </div>
-      </div>
-
-      <div class="section" style="padding:0;margin-top:18px">
-        <div class="section-head" style="padding:0 20px"><h3>Permintaan Untukmu</h3><button>Urutkan</button></div>
-
-        <article class="card task-card">
-          <div class="thumb">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#25315E"/><rect y="46" width="64" height="18" fill="#39456F"/><path d="M20 46V12" stroke="#7C87A8" stroke-width="4" stroke-linecap="round"/><path d="M20 12h16" stroke="#7C87A8" stroke-width="3.4" stroke-linecap="round"/><ellipse cx="38" cy="13.4" rx="5.4" ry="4" fill="#55618A"/><path d="M34 9.5l8 8M42 9.5l-8 8" stroke="#FF7A64" stroke-width="2" stroke-linecap="round"/></svg>
-          </div>
-          <div class="tx">
-            <div class="t">PJU mati 3 titik, Jl. Merpati Raya</div>
-            <div class="m">Dishub klaim selesai 2 jam lalu · 220 m darimu</div>
-            <div class="foot">
-              <span class="quorum"><span class="q"><i class="f"></i><i></i><i></i></span>1 dari 3</span>
-              <span class="pts">+15 poin</span>
-            </div>
-          </div>
-          <button class="go" data-go="s-verify">Cek</button>
-        </article>
-
-        <article class="card task-card">
-          <div class="thumb">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#B8C4D4"/><rect y="40" width="64" height="24" fill="#8D96A8"/><path d="M0 52h64" stroke="#E8DFC8" stroke-width="2.6" stroke-dasharray="7 9"/><rect x="24" y="42" width="20" height="12" rx="3" fill="#5A6472"/><path d="M46 40l5-10 5 10z" fill="#F2A118" stroke="#C97E06" stroke-width="1.4"/></svg>
-          </div>
-          <div class="tx">
-            <div class="t">Tambalan jalan, Gg. Melati II</div>
-            <div class="m">Bina Marga klaim selesai kemarin · 450 m darimu</div>
-            <div class="foot">
-              <span class="quorum"><span class="q"><i class="f"></i><i class="f"></i><i></i></span>2 dari 3</span>
-              <span class="pts">+15 poin</span>
-            </div>
-          </div>
-          <button class="go" data-go="s-verify">Cek</button>
-        </article>
-
-        <div class="why-me">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2B549E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-          <p><b>Kenapa kamu yang diminta?</b> Kamu mengaktifkan berbagi lokasi dan tercatat rutin melintas di area ini. Verifikasimu dinilai independen karena tidak terhubung instansi mana pun. <button>Atur preferensi</button></p>
-        </div>
-      </div>
-      <div style="height:18px"></div>
-    </div>
-  </section>
-
-  <!-- ============ S6 · BANDINGKAN BUKTI ============ -->
-  <section class="screen" id="s-verify" data-status="dark">
-    <div class="appbar">
-      <button class="back" data-go="s-kawal" aria-label="Kembali">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#13294B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
-      <h2>Verifikasi Lapangan</h2>
-      <span class="meta">#BNH-2606-8812</span>
+
+      <button class="card nrow" onclick="toast('Obrolan Mina Laut diarsipkan')" style="width:100%; opacity:0.75; margin-top:6px">
+        <span class="em" style="background:#E4F3F0">🐟</span>
+        <div style="flex:1">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <b>Mina Laut Sejahtera</b>
+            <time style="font-size:7px; color:var(--muted)">Kemarin</time>
+          </div>
+          <p style="font-size:8.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; margin-top:2px">Tawaran tuna beku dari kami masih berlaku bu...</p>
+          <span style="font-size:7.5px; color:var(--muted); display:block; margin-top:3px">Offline</span>
+        </div>
+      </button>
+    </div>
+    <div class="nav">
+      <button onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-home"/></svg>Beranda</button>
+      <button onclick="go('scr-match')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-spark"/></svg>Match</button>
+      <button onclick="go('scr-post')"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button>
+      <button class="on" onclick="go('scr-chat-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-chat"/></svg>Chat</button>
+      <button onclick="go('scr-profil')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-user"/></svg>Profil</button>
+    </div>
+  </section>
+
+  <!-- ========== 10 ACTIVE CHAT ========== -->
+  <section class="scr" id="scr-chat">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="chat-head">
+      <button class="back" onclick="go('scr-chat-list')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.4"><use href="#i-back"/></svg></button>
+      <span class="pf">🌶️</span>
+      <div class="nm"><b>CV Tani Makmur <span class="badge-nib"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB</span></b><small>● Online · Negosiasi aktif</small></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8794" stroke-width="2"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+    </div>
+    <div class="pin">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2E8F86" stroke-width="2"><path d="M9 12h6M9 16h4M7 3h10a2 2 0 0 1 2 2v16l-3-2-3 2-3-2-3 2V5a2 2 0 0 1 2-2Z"/></svg>
+      <div><b id="pinTitle">Draft Kesepakatan · 80% lengkap</b><small id="pinSub">Tinggal jadwal kirim &amp; metode QC</small></div>
+      <button class="open" onclick="go('scr-agree')">Buka Form</button>
+    </div>
+    <div class="msgs" id="msgs">
+      <div class="msg in">Halo Bu Sari! Untuk 2 ton/bulan kami siap. Harga Rp38.000/kg sudah termasuk sortir Grade A. 🌶️<time>18:41</time></div>
+      
+      <!-- Outgoing message with custom Read Ticks status -->
+      <div class="msg out">
+        Kalau kontrak 3 bulan, bisa di Rp36.500/kg pak? Kami butuh kepastian pasokan tiap Senin.
+        <div style="display:flex; justify-content:flex-end; align-items:center; gap:3px; margin-top:2px">
+          <time style="color:rgba(255,255,255,0.7); font-size:6px; margin:0">18:44</time>
+          <!-- Double blue checks for Read tick status -->
+          <svg width="10" height="10" fill="none" stroke="#FFD27A" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
+        </div>
+      </div>
+      
+      <div class="offer" id="offer1">
+        <small>PENAWARAN BARU</small>
+        <div class="rw"><span>Harga</span><b>Rp37.000 / kg</b></div>
+        <div class="rw"><span>Volume</span><b>500 kg / minggu</b></div>
+        <div class="rw"><span>Kontrak</span><b>3 bulan · kirim Senin</b></div>
+        <div class="ok"><button class="y" onclick="acceptOffer()">Setuju</button><button class="n" onclick="counterOffer()">Nego lagi</button></div>
+      </div>
+      <div class="msg in">Bagaimana bu? Kalau setuju, kita lanjut isi Form Kesepakatan ya 🤝<time>18:52</time></div>
+    </div>
+    <div class="inputbar">
+      <input id="chatInput" placeholder="Tulis pesan…" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="send" onclick="sendMsg()"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="m5 12 14-7-4 14-3.5-5.5Z"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ========== 11 AGREEMENT FORM ========== -->
+  <section class="scr" id="scr-agree">
+    <div class="gradhead">
+      <div class="sb light" style="padding:14px 6px 4px"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#fff"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#fff" stroke="#fff"><use href="#bat"/></svg></span></div>
+      <div class="bar-t">
+        <button class="rnd" onclick="go('scr-chat')"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><use href="#i-back"/></svg></button>
+        <h2>Form Kesepakatan</h2>
+        <span style="width:28px"></span>
+      </div>
+      <div class="steps">
+        <div class="stp done"><span class="c"><svg viewBox="0 0 12 12" style="color:#2E8F86"><use href="#check"/></svg></span><small>Minat</small></div>
+        <span class="stline done"></span>
+        <div class="stp done"><span class="c"><svg viewBox="0 0 12 12" style="color:#2E8F86"><use href="#check"/></svg></span><small>Negosiasi</small></div>
+        <span class="stline done"></span>
+        <div class="stp" id="stpSepakat"><span class="c">3</span><small>Sepakat</small></div>
+        <span class="stline" id="stl3"></span>
+        <div class="stp" id="stpKontak"><span class="c">4</span><small>Kontak</small></div>
+      </div>
     </div>
     <div class="body">
-      <div class="section">
-        <div class="before-strip">
-          <div class="bthumb">
-            <svg viewBox="0 0 42 42" aria-hidden="true"><rect width="42" height="42" fill="#25315E"/><path d="M14 42V10" stroke="#7C87A8" stroke-width="3.4"/><path d="M14 10h11" stroke="#7C87A8" stroke-width="3"/><ellipse cx="26" cy="11" rx="4" ry="3" fill="#55618A"/><path d="M23 8l6 6M29 8l-6 6" stroke="#FF7A64" stroke-width="1.7" stroke-linecap="round"/></svg>
-          </div>
-          <p><b>Laporan awal · 28 Jun:</b> tiga titik PJU padam total di Jl. Merpati Raya, gelap gulita saat malam.</p>
-        </div>
-
-        <div style="height:14px"></div>
-        <div class="cmp-grid">
-          <div class="cmp-cell">
-            <div class="lab claim">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13"/></svg>
-              KLAIM INSTANSI · 15 JUL
-            </div>
-            <svg class="cmp-scene" viewBox="0 0 170 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <rect width="170" height="110" fill="#25315E"/>
-              <rect y="82" width="170" height="28" fill="#39456F"/>
-              <path d="M48 82V20" stroke="#7C87A8" stroke-width="5" stroke-linecap="round"/>
-              <path d="M48 20h24" stroke="#7C87A8" stroke-width="4" stroke-linecap="round"/>
-              <ellipse cx="76" cy="22" rx="7" ry="5" fill="#FFE9A8"/>
-              <path d="M76 30L58 82h36z" fill="#FFE9A8" opacity=".22"/>
-              <circle cx="140" cy="26" r="8" fill="#FFE9A8" opacity=".3"/>
-            </svg>
-          </div>
-          <div class="cmp-cell">
-            <div class="lab mine">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              FOTOMU · SEKARANG
-            </div>
-            <button class="cam" aria-label="Ambil foto pembanding">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F6BF2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              Buka kamera<br/>di titik yang sama
-            </button>
-          </div>
-        </div>
-
-        <div class="card ask-card">
-          <h3>Apakah perbaikan benar terjadi<br/>di lokasi ini?</h3>
-          <div class="opts">
-            <button class="vote yes" id="voteYes">
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#0E7C55" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>
-              Ya, sudah menyala
-            </button>
-            <button class="vote no" id="voteNo">
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#C23A26" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-              Belum, masih padam
-            </button>
-          </div>
-          <div class="quorum-big">
-            <span class="qb-ava">
-              <span class="a" style="background:#1F6BF2">DW</span>
-              <span class="a" style="background:#D6DEEB;color:#93A2BE" id="qSlot2">?</span>
-              <span class="a" style="background:#D6DEEB;color:#93A2BE">?</span>
-            </span>
-            <p><b id="qCount">1 dari 3</b> konfirmasi terkumpul</p>
-          </div>
-          <div class="stamp" id="stamp">TERVERIFIKASI WARGA</div>
-          <div id="voteMsg" role="status"></div>
-        </div>
-
-        <div class="lock-note">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D6E8E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
-          <p><b>Anti-manipulasi:</b> foto wajib diambil langsung dari kamera, lokasi dan waktu terkunci otomatis. Konfirmasi dari akun baru atau berpola mencurigakan diaudit ulang, dan akun yang terhubung instansi terkait diblokir dari verifikasi ini.</p>
+      <div class="card" style="margin:14px 16px 0;padding:13px">
+        <h3 style="font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:6px;text-align:left"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2"><path d="M9 12h6M9 16h6M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9Z"/><path d="M13 3v6h6"/></svg>Ringkasan Kesepakatan</h3>
+        <div style="margin-top:6px">
+          <div class="frow"><small>Komoditas</small><b>Cabai Merah Keriting · Grade A</b></div>
+          <div class="frow"><small>Volume</small><b>500 kg / minggu</b></div>
+          <div class="frow"><small>Harga Disepakati</small><b>Rp37.000 / kg</b></div>
+          <div class="frow"><small>Durasi Kontrak</small><b>3 bulan (Agu–Okt 2026)</b></div>
+          <div class="frow"><small>Jadwal Kirim</small><b>Setiap Senin, 06.00 WIB</b></div>
+          <div class="frow"><small>Kontrol Mutu</small><b>Sortir di gudang pembeli</b></div>
         </div>
       </div>
-      <div style="height:24px"></div>
+      <div class="card" style="margin:10px 16px 0;padding:11px 13px; text-align:left">
+        <b style="font-size:10px;font-weight:700">Persetujuan kedua pihak</b>
+        <div class="frow" style="margin-top:4px"><small>👩🏻‍🌾 <span class="sign-comp-name">UD Berkah Pangan</span> (Pembeli)</small><b id="signMe" style="color:#B3BEC9">Belum tanda tangan</b></div>
+        <div class="frow"><small>🌶️ CV Tani Makmur (Produsen)</small><b style="color:#2E8F5B">✓ Sudah setuju</b></div>
+      </div>
+      <div class="pad">
+        <button class="btn btn-navy" id="signBtn" style="width:100%;height:38px;font-size:10.5px;margin-top:12px" onclick="signAgreement()">✍️ Tandatangani &amp; Sepakati</button>
+        <button class="btn btn-teal" id="rfqBtn" style="width:100%;height:38px;font-size:10.5px;margin-top:12px;display:none" onclick="go('scr-rfq')">📄 Generate RFQ / Ringkasan Procurement</button>
+        <p style="font-size:8px;color:var(--muted);text-align:center;margin:9px 0 16px;line-height:1.5">Setelah kedua pihak sepakat, RFQ otomatis dibuat<br>dan kontak mitra akan dibuka. 🔓</p>
+      </div>
     </div>
   </section>
 
-  <!-- ============ S7 · SINYAL SOSMED ============ -->
-  <section class="screen" id="s-sosmed" data-status="dark" data-nav="kawal">
-    <div class="kw-head">
-      <h2>Sinyal Media Sosial</h2>
-      <p>Keluhan publik dari X &amp; Threads, dikelompokkan otomatis, <b>menunggu konfirmasi warga</b> sebelum jadi laporan resmi</p>
+  <!-- ========== 12 RFQ ========== -->
+  <section class="scr" id="scr-rfq">
+    <div class="sb"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#24313F"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#24313F" stroke="#24313F"><use href="#bat"/></svg></span></div>
+    <div class="plainhead">
+      <button class="back" onclick="go('scr-agree')"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.4"><use href="#i-back"/></svg></button>
+      <h2>RFQ &amp; Ringkasan Procurement</h2>
     </div>
-    <div class="body has-nav">
-      <div class="seg" role="tablist" aria-label="Filter platform">
-        <button class="on" role="tab" aria-selected="true">Semua</button>
-        <button role="tab" aria-selected="false">X</button>
-        <button role="tab" aria-selected="false">Threads</button>
+    <div class="body">
+      <div class="rfq-doc">
+        <div class="hd"><b>RFQ-2026-0714</b><span>Dibuat otomatis oleh Ali ✨</span></div>
+        <div class="frow"><small>Pembeli</small><b class="sign-comp-name">UD Berkah Pangan</b></div>
+        <div class="frow"><small>Produsen</small><b>CV Tani Makmur · Garut</b></div>
+        <div class="frow"><small>Item</small><b>Cabai Merah Keriting, Grade A</b></div>
+        <div class="frow"><small>Volume Total</small><b>± 6.000 kg / 3 month</b></div>
+        <div class="frow"><small>Harga Satuan</small><b>Rp37.000 / kg</b></div>
+        <div class="frow"><small>Estimasi Nilai</small><b>Rp222.000.000</b></div>
+        <div class="frow"><small>Jadwal</small><b>Mingguan · Senin 06.00 WIB</b></div>
+        <div class="frow"><small>Status</small><b style="color:#2E8F5B">✓ Disepakati kedua pihak</b></div>
       </div>
-
-      <article class="card signal-card">
-        <div class="signal-head">
-          <div class="top">
-            <h3>Genangan parah di kolong Flyover Slipi</h3>
-            <span class="badge b-coral">Sinyal Kuat</span>
-          </div>
-          <div class="meta">
-            <span class="badge b-ghost">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C8 2 5 5 5 9c0 5.2 5.8 10.4 6.8 11.2.1.1.3.1.4 0C13.2 19.4 19 14.2 19 9c0-4-3-7-7-7z"/></svg>
-              Lokasi terdeteksi: Kolong Flyover Slipi
-            </span>
-            <span class="badge b-teal">7 postingan · 3 jam terakhir</span>
-          </div>
-          <div class="senti">
-            <div class="lab"><span>Sentimen publik</span><b>68% marah</b></div>
-            <div class="bar" aria-hidden="true">
-              <i style="width:68%;background:var(--coral)"></i>
-              <i style="width:22%;background:var(--amber)"></i>
-              <i style="width:10%;background:#C9D4E4"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="post">
-          <span class="pav" style="background:#13294B">DN</span>
-          <div class="tx">
-            <div class="who">@dhani_naufal <span>· 42 mnt</span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="#93A2BE" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.3l-4.9-6.4L6.2 22H3.1l7.3-8.3L2.5 2h6.4l4.4 5.9zm-1.1 18h1.7L7.9 3.7H6z"/></svg>
-            </div>
-            <p>kolong slipi banjir lagi, motor pada mogok. tiap hujan selalu begini, gak ada yang urus @dinasSDAJKT</p>
-            <span class="badge b-coral" style="margin-top:6px">Marah</span>
-          </div>
-        </div>
-        <div class="post">
-          <span class="pav" style="background:#7A5CF0">SR</span>
-          <div class="tx">
-            <div class="who">@sarahranti <span>· 1 jam</span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#93A2BE" stroke-width="2" aria-hidden="true"><path d="M12.5 3C8 3 5.5 6 5.5 9.5c0 3 2 4.5 4 5v6.5l3-2c4.5 0 8-2.8 8-8C20.5 6 17 3 12.5 3z"/></svg>
-            </div>
-            <p>lewat kolong slipi genangannya udah selutut, please hati-hati yang naik motor</p>
-            <span class="badge b-amber" style="margin-top:6px">Frustrasi</span>
-          </div>
-        </div>
-
-        <div class="signal-foot">
-          <button class="yes" data-go="s-verify">Benar terjadi, konfirmasi</button>
-          <button class="no">Bukan masalah nyata</button>
-        </div>
-      </article>
-
-      <div class="hitl-note">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A34B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px" aria-hidden="true"><path d="M12 2a7 7 0 017 7c0 2.4-1.2 4-2.5 5.4-.8.9-1.5 2-1.5 3.1V19a2 2 0 01-2 2h-2a2 2 0 01-2-2v-1.5c0-1.1-.7-2.2-1.5-3.1C5.7 13 4.5 11.4 4.5 9A7 7 0 0112 2z"/><path d="M9.5 21.5h5"/></svg>
-        <p><b>Sinyal tidak langsung jadi laporan.</b> Sistem hanya membaca postingan publik. Warga sekitar diminta konfirmasi dulu supaya sindiran, berita lama, atau salah lokasi tidak masuk ke instansi.</p>
+      <div class="pad">
+        <button class="btn btn-ghost" style="width:100%;height:36px;font-size:10px;margin-top:12px" onclick="toast('RFQ-2026-0714.pdf diunduh 📄')">⬇️ Unduh PDF RFQ</button>
+        <button class="btn btn-navy" style="width:100%;height:38px;font-size:10.5px;margin-top:9px" onclick="go('scr-contact')">🔓 Buka Kontak Mitra</button>
       </div>
-
-      <article class="card signal-card">
-        <div class="signal-head" style="border-bottom:none">
-          <div class="top">
-            <h3>Rambu roboh dekat Pasar Slipi</h3>
-            <span class="badge b-amber">Sinyal Lemah</span>
-          </div>
-          <div class="meta">
-            <span class="badge b-ghost">2 postingan · kemarin</span>
-            <span class="badge b-teal">Menunggu 2 konfirmasi</span>
-          </div>
-        </div>
-      </article>
-      <div style="height:18px"></div>
+      <div class="card reveal-lock" style="margin:12px 16px 16px">
+        <span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="#E58A2E" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0"/></svg></span>
+        <span style="text-align:left"><b>Kontak dibuka setelah sepakat</b><small>Demi keamanan, Ali hanya membuka kontak jika kedua pihak sudah menandatangani.</small></span>
+        <svg style="width:38px;height:42px;margin-left:auto;flex:0 0 auto" viewBox="0 0 200 220"><use href="#ali"/></svg>
+      </div>
     </div>
   </section>
 
-  <!-- ============ S8 · TRANSPARANSI ============ -->
-  <section class="screen" id="s-dash" data-status="dark" data-nav="data">
-    <div class="kw-head">
-      <h2>Transparansi Publik</h2>
-      <p>Kinerja riil instansi <b>versi verifikasi warga</b>, bukan versi klaim. Terbuka untuk siapa pun.</p>
+  <!-- ========== 13 CONTACT REVEAL ========== -->
+  <section class="scr" id="scr-contact">
+    <div class="gradhead" style="padding-bottom:22px">
+      <div class="sb light" style="padding:14px 6px 4px"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#fff"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#fff" stroke="#fff"><use href="#bat"/></svg></span></div>
+      <div class="bar-t">
+        <button class="rnd" onclick="go('scr-rfq')"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><use href="#i-back"/></svg></button>
+        <h2>Kontak Terbuka 🔓</h2>
+        <span style="width:28px"></span>
+      </div>
+      <p style="font-size:8.5px;text-align:center;opacity:.85;margin-top:6px">Selamat! Kesepakatan tercapai — ini kontak mitramu.</p>
     </div>
-    <div class="body has-nav">
-      <div class="section" style="margin-top:16px">
-        <div style="display:flex;gap:7px;margin-bottom:13px">
-          <span class="badge b-blue" style="padding:7px 13px">Jakarta Barat</span>
-          <span class="badge b-ghost" style="padding:7px 13px">Juli 2026</span>
-        </div>
-        <div class="kpi-grid">
-          <div class="kpi">
-            <div class="v">1.284</div>
-            <div class="l">Laporan masuk bulan ini</div>
-            <span class="delta up">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              212 dari sinyal sosmed
-            </span>
-          </div>
-          <div class="kpi">
-            <div class="v">61<small>%</small></div>
-            <div class="l">Selesai terverifikasi warga</div>
-            <span class="delta up">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              +6% vs Juni
-            </span>
-          </div>
-          <div class="kpi">
-            <div class="v">9<small>%</small></div>
-            <div class="l">Klaim "selesai" dibatalkan warga</div>
-            <span class="delta down">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              turun dari 14%
-            </span>
-          </div>
-          <div class="kpi">
-            <div class="v">3,2 <small>hari</small></div>
-            <div class="l">Rata-rata respons pertama instansi</div>
-            <span class="delta up">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-              lebih cepat 0,8 hari
-            </span>
-          </div>
-        </div>
+    <div class="body">
+      <div class="card contact-card">
+        <span class="pf">🌶️</span>
+        <h3>CV Tani Makmur</h3>
+        <span class="badge-nib" style="margin-top:3px"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB Terverifikasi</span>
+        <div class="crow"><svg viewBox="0 0 24 24" fill="none" stroke="#2E8F86" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.6 3a2 2 0 0 1-.5 1.8L7.9 9.9a16 16 0 0 0 6.2 6.2l1.4-1.3a2 2 0 0 1 1.8-.5l3 .6a2 2 0 0 1 1.7 2Z"/></svg><span><small>Telepon / WhatsApp</small><b>+62 812-2043-8871 (Pak Dedi)</b></span></div>
+        <div class="crow"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="m4 7 8 6 8-6M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg><span><small>Email</small><b>halo@tanimakmur.co.id</b></span></div>
+        <div class="crow"><svg viewBox="0 0 24 24" fill="none" stroke="#E58A2E" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span><small>Alamat Gudang</small><b>Jl. Raya Cikajang KM 4, Garut, Jawa Barat</b></span></div>
+        <button class="btn btn-teal" style="width:100%;height:36px;font-size:10px;margin-top:12px" onclick="toast('Membuka WhatsApp… 💬')">💬 Hubungi via WhatsApp</button>
       </div>
-
-      <div class="section">
-        <div class="section-head"><h3>Penyelesaian Riil per Instansi</h3></div>
-        <div class="card agency-rank">
-          <div class="ar-row">
-            <div class="nm"><b>Bina Marga</b><span>jalan &amp; trotoar</span></div>
-            <div class="track"><i style="width:74%;background:var(--green)"></i></div>
-            <span class="pct" style="color:var(--green-deep)">74%</span>
-          </div>
-          <div class="ar-row">
-            <div class="nm"><b>Sumber Daya Air</b><span>drainase &amp; banjir</span></div>
-            <div class="track"><i style="width:66%;background:var(--green)"></i></div>
-            <span class="pct" style="color:var(--green-deep)">66%</span>
-          </div>
-          <div class="ar-row">
-            <div class="nm"><b>Lingkungan Hidup</b><span>sampah &amp; taman</span></div>
-            <div class="track"><i style="width:58%;background:var(--amber)"></i></div>
-            <span class="pct" style="color:var(--amber-deep)">58%</span>
-          </div>
-          <div class="ar-row">
-            <div class="nm"><b>Dishub</b><span>PJU &amp; rambu</span></div>
-            <div class="track"><i style="width:41%;background:var(--coral)"></i></div>
-            <span class="pct" style="color:var(--coral-deep)">41%</span>
-          </div>
-        </div>
+      <div class="card" style="margin:12px 16px 16px;padding:11px;display:flex;gap:9px;align-items:center;background:#F2FAF8;border-color:#D9EAE6;text-align:left">
+        <svg style="width:40px;height:44px;flex:0 0 auto" viewBox="0 0 200 220"><use href="#ali"/></svg>
+        <p style="font-size:8.5px;line-height:1.55"><b>Ali:</b> "Kerja sama pertama kalian dimulai! 🎉 Pembayaran &amp; pengiriman kalian atur langsung ya — Jalin fokus menjodohkan &amp; menjaga kepercayaan."</p>
       </div>
-
-      <div class="section">
-        <div class="section-head"><h3>Kepadatan Laporan per Kelurahan</h3></div>
-        <div class="card heat">
-          <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--ink-soft)">
-            <span>56 kelurahan, Jakarta Barat</span><span>Jul 2026</span>
-          </div>
-          <div class="heat-grid" aria-label="Peta kepadatan laporan">
-            <i style="opacity:.14"></i><i style="opacity:.4"></i><i style="opacity:.22"></i><i style="opacity:.65"></i><i style="opacity:.3"></i><i style="opacity:.12"></i><i style="opacity:.5"></i>
-            <i style="opacity:.35"></i><i style="opacity:.85"></i><i style="opacity:.95"></i><i style="opacity:.5"></i><i style="opacity:.18"></i><i style="opacity:.42"></i><i style="opacity:.25"></i>
-            <i style="opacity:.2"></i><i style="opacity:.6"></i><i style="opacity:.78"></i><i style="opacity:.38"></i><i style="opacity:.55"></i><i style="opacity:.15"></i><i style="opacity:.3"></i>
-            <i style="opacity:.45"></i><i style="opacity:.28"></i><i style="opacity:.16"></i><i style="opacity:.7"></i><i style="opacity:.35"></i><i style="opacity:.6"></i><i style="opacity:.2"></i>
-          </div>
-          <div class="lg"><span>sedikit</span><i style="opacity:.15"></i><i style="opacity:.45"></i><i style="opacity:.75"></i><i></i><span>padat</span></div>
-        </div>
-      </div>
-
-      <div class="esc-callout">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C23A26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M12 3L2.5 20h19z"/><path d="M12 10v4M12 17.2v.3"/></svg>
-        <p><b>12 laporan dieskalasi</b> ke tingkat provinsi bulan ini karena SLA terlewat atau gagal verifikasi berulang.</p>
-      </div>
-      <p class="open-note">Data agregat terbuka untuk publik, media, DPRD, dan Ombudsman.<br/>Diperbarui tiap jam dari verifikasi lapangan warga.</p>
-      <div style="height:18px"></div>
     </div>
   </section>
 
-  <!-- ============ S9 · PROFIL ============ -->
-  <section class="screen" id="s-profil" data-status="light" data-nav="profil">
-    <div class="body has-nav">
-      <div class="pf-hero">
-        <div class="pf-top">
-          <div class="avatar">
-            <svg viewBox="0 0 46 46" width="58" height="58" aria-hidden="true"><rect width="46" height="46" fill="#FFD873"/><circle cx="23" cy="18" r="8" fill="#8A5A2B"/><path d="M8 46c0-9 6.7-15 15-15s15 6 15 15z" fill="#0B3AA0"/></svg>
-          </div>
-          <div>
-            <h2>Raka Pramudya</h2>
-            <div class="vloc">Kel. Palmerah, Jakarta Barat · sejak Feb 2026</div>
-            <span class="vbadge">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l2.4 2.4 3.4-.5.9 3.3 3 1.6-1.5 3.2 1.5 3.2-3 1.6-.9 3.3-3.4-.5L12 22l-2.4-2.4-3.4.5-.9-3.3-3-1.6 1.5-3.2L2.3 8.8l3-1.6.9-3.3 3.4.5z"/><path d="M8.8 12l2.2 2.2 4.2-4.4"/></svg>
-              Warga Terverifikasi
-            </span>
-          </div>
-        </div>
+  <!-- ========== 14 PROFILE SCREEN ========== -->
+  <section class="scr" id="scr-profil">
+    <!-- Light Status Bar integrated into standard flow with absolute overlay -->
+    <div class="sb light" style="background:#3AA697; position:absolute; top:0; left:0; right:0; z-index:20;"><span>19:02</span><span class="ic"><svg viewBox="0 0 15 12" fill="#fff"><use href="#sig"/></svg><span style="font-size:8.5px">LTE</span><svg viewBox="0 0 22 12" fill="#fff" stroke="#fff"><use href="#bat"/></svg></span></div>
+    
+    <!-- Scrollable profile body to avoid cut-off and spacing overlap -->
+    <div class="body" style="background:#FBFCFD; padding-top:0;">
+      
+      <!-- Top profile card inside scroll view -->
+      <div class="prof-hero" style="padding-top: 50px;">
+        <span class="pf">👩🏻‍🌾</span>
+        <h3 class="profile-company-lbl">UD Berkah Pangan</h3>
+        <p><span class="dyn" data-buyer="Pembeli" data-producer="Produsen">Pembeli</span> · <span id="profile-city-lbl">Bandung, Jawa Barat</span></p>
+        <div style="margin-top:6px"><span class="badge-nib" id="profileNib" style="display:none"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB Terverifikasi</span></div>
       </div>
 
-      <div class="card trust-card">
-        <div class="ring">
-          <svg width="88" height="88" viewBox="0 0 88 88" aria-hidden="true">
-            <circle cx="44" cy="44" r="38" fill="none" stroke="#EDF1F8" stroke-width="8"/>
-            <circle cx="44" cy="44" r="38" fill="none" stroke="#189A6C" stroke-width="8" stroke-linecap="round"
-              stroke-dasharray="238.7" stroke-dashoffset="31"/>
-          </svg>
-          <span class="num">87</span>
-        </div>
-        <div class="tx">
-          <b>Trust Score: Sangat Tepercaya</b>
-          <p>Dibangun dari riwayat laporan valid dan verifikasi yang terbukti akurat saat diaudit acak. Skor tinggi membuat konfirmasimu berbobot lebih besar dalam kuorum.</p>
-        </div>
+      <!-- Business Dashboard Metrics (Moved here as requested) -->
+      <div class="card prof-stats">
+        <div><b>7</b><small>Kesepakatan</small></div>
+        <div><b>4.9</b><small>Rating Mitra</small></div>
+        <div><b>26</b><small>Koneksi</small></div>
       </div>
 
-      <div class="section" style="margin-top:14px">
-        <div class="stat-row" style="margin-top:0">
-          <div class="stat"><div class="v">14</div><div class="l">Laporan</div></div>
-          <div class="stat"><div class="v">32</div><div class="l">Verifikasi</div></div>
-          <div class="stat"><div class="v" style="color:var(--amber-deep)">460</div><div class="l">Poin</div></div>
+      <div class="pad">
+        <div class="sec-h" style="margin-top:10px"><b>Dashboard Bisnis</b></div>
+        <div class="stats" style="margin-bottom:14px">
+          <div class="card stat"><div class="row"><small>Match Baru</small><span class="icon" style="background:#E4F3F0"><svg viewBox="0 0 24 24" fill="none" stroke="#2E8F86" stroke-width="2"><path d="m12 21-8-8a5.4 5.4 0 0 1 8-7.4A5.4 5.4 0 0 1 20 13Z"/></svg></span></div><div class="num">12</div><span class="unit">mitra</span></div>
+          <div class="card stat"><div class="row"><small>Negosiasi</small><span class="icon" style="background:#EAF3FF"><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2"><use href="#i-chat"/></svg></span></div><div class="num">3</div><span class="unit">aktif</span></div>
+          <div class="card stat"><div class="row"><small>Posting Aktif</small><span class="icon" style="background:#FFF6E4"><svg viewBox="0 0 24 24" fill="none" stroke="#E58A2E" stroke-width="2"><path d="M9 12h6M9 16h4M7 3h10a2 2 0 0 1 2 2v16l-3-2-3 2-3-2-3 2V5a2 2 0 0 1 2-2Z"/></svg></span></div><div class="num">2</div><span class="unit">post</span></div>
+          <div class="card stat"><div class="row"><small>Kesepakatan</small><span class="icon" style="background:#F2ECFF"><svg viewBox="0 0 24 24" fill="none" stroke="#7A5CC7" stroke-width="2"><path d="M9 12l2 2 4-5M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/></svg></span></div><div class="num">7</div><span class="unit">selesai</span></div>
         </div>
-      </div>
 
-      <div class="section">
-        <div class="section-head"><h3>Lencana</h3><button>Semua</button></div>
-        <div class="badge-row">
-          <div class="medal">
-            <div class="mi" style="background:var(--blue-wash)">
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#1F6BF2" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg>
-            </div>
-            <b>Mata Elang</b><span>10 verifikasi akurat beruntun</span>
-          </div>
-          <div class="medal">
-            <div class="mi" style="background:var(--amber-wash)">
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#C97E06" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>
-            </div>
-            <b>Gerak Cepat</b><span>Verifikasi kurang dari 1 jam</span>
-          </div>
-          <div class="medal">
-            <div class="mi" style="background:var(--green-wash)">
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#0E7C55" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-5h6v5"/></svg>
-            </div>
-            <b>Penjaga Kampung</b><span>Aktif 5 bulan beruntun</span>
-          </div>
-        </div>
+        <div class="sec-h"><b>Komoditas yang dicari</b><button>Edit</button></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap; margin-bottom:14px"><span class="chip">Cabai Merah</span><span class="chip">Bawang Merah</span><span class="chip">Tomat</span><span class="chip">Kentang</span></div>
+        
+        <div class="sec-h"><b>Pengaturan</b></div>
+        <button class="card nrow" onclick="go('scr-profile')" style="width:100%"><span class="em" style="background:#EAF3FF">🏢</span><span style="flex:1"><b>Edit Profil Bisnis</b><p>Nama usaha, kontak, kapasitas, lokasi</p></span></button>
+        <button class="card nrow" onclick="go('scr-nib')" style="width:100%"><span class="em" style="background:#EAF6EF">🛡️</span><span style="flex:1"><b>Verifikasi NIB</b><p id="profileNibStatus">Belum diverifikasi</p></span></button>
+        <button class="card nrow" onclick="go('scr-notif')" style="width:100%"><span class="em" style="background:#FFF6E4">🔔</span><span style="flex:1"><b>Notifikasi</b><p>Match, penawaran, kesepakatan</p></span></button>
+        <button class="card nrow" onclick="go('scr-role')" style="margin-bottom:24px; width:100%"><span class="em" style="background:#FBEEEE">🚪</span><span style="flex:1"><b>Keluar / Ganti Peran</b><p>Coba alur Produsen atau Pembeli</p></span></button>
       </div>
-
-      <div class="section">
-        <div class="section-head"><h3>Privasi &amp; Kanal</h3></div>
-        <div class="setting">
-          <div class="set-row">
-            <span class="si">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1F6BF2" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2C8 2 5 5 5 9c0 5.2 5.8 10.4 6.8 11.2.1.1.3.1.4 0C13.2 19.4 19 14.2 19 9c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-            </span>
-            <div class="tx">
-              <b>Riwayat lokasi (opt-in)</b>
-              <p>Dipakai hanya untuk mencocokkanmu dengan permintaan verifikasi terdekat</p>
-            </div>
-            <button class="toggle on" role="switch" aria-checked="true" aria-label="Riwayat lokasi"></button>
-          </div>
-          <div class="set-row">
-            <span class="si">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1F6BF2" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 01-3.4 0"/></svg>
-            </span>
-            <div class="tx">
-              <b>Radius notifikasi kawalan</b>
-              <p>500 m dari rumah dan rute harianmu</p>
-            </div>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93A2BE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
-          </div>
-          <div class="set-row">
-            <span class="si">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1F6BF2" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-9.3 8.4 8.6 8.6 0 01-3.9-1L3 20l1.1-4.6a8.4 8.4 0 013.6-11 8.5 8.5 0 0113.3 7.1z"/></svg>
-            </span>
-            <div class="tx">
-              <b>Lapor via WhatsApp</b>
-              <p>Kanal alternatif untuk keluarga yang tidak memakai aplikasi</p>
-            </div>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93A2BE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
-          </div>
-        </div>
-      </div>
-      <div style="height:20px"></div>
+    </div>
+    
+    <div class="nav">
+      <button onclick="go('scr-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-home"/></svg>Beranda</button>
+      <button onclick="go('scr-match')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-spark"/></svg>Match</button>
+      <button onclick="go('scr-post')"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></button>
+      <button onclick="go('scr-chat-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-chat"/></svg>Chat</button>
+      <button class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><use href="#i-user"/></svg>Profil</button>
     </div>
   </section>
 
-</div><!-- /viewport -->
-</div><!-- /device -->
-</div><!-- /device-wrap -->
+</div>
 
-<footer class="stage-foot">
-  Konsep <b>BENAHI</b> · prototipe visual 10 layar · dibangun dari dokumen konsep pelaporan &amp; verifikasi infrastruktur publik.<br/>
-  Diferensiasi inti: <b>verifikasi komunitas</b> menutup laporan, <b>sentiment analysis</b> menjaring keluhan X &amp; Threads, <b>dashboard transparansi</b> menekan akuntabilitas.
-</footer>
+<!-- ======================= SCREEN MAP PANEL ======================= -->
+<div class="panel">
+  <h4><svg viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2"><use href="#i-spark"/></svg>Peta Layar — klik &amp; jelajahi</h4>
+  <p>Ikuti alur interaktif dengan menekan tombol handphone, atau langsung lompat ke layar mana saja melalui daftar kontrol di bawah ini.</p>
+  <div class="chips" id="chipbar">
+    <button data-s="scr-splash">Splash</button>
+    <button data-s="scr-role">Daftar &amp; Pilih Peran</button>
+    <button data-s="scr-profile">Profil Bisnis</button>
+    <button data-s="scr-nib">Verifikasi NIB</button>
+    <button data-s="scr-home">Beranda / Dashboard</button>
+    <button data-s="scr-post">Posting Need/Supply</button>
+    <button data-s="scr-match">AI Matching</button>
+    <button data-s="scr-notif">Notifikasi</button>
+    <button data-s="scr-chat-list">Daftar Chat</button>
+    <button data-s="scr-chat">Chat Negosiasi</button>
+    <button data-s="scr-agree">Form Kesepakatan</button>
+    <button data-s="scr-rfq">RFQ / Procurement</button>
+    <button data-s="scr-contact">Kontak Terbuka</button>
+    <button data-s="scr-profil">Profil Pengguna</button>
+  </div>
+  <div class="legend">
+    <b>Alur Lengkap:</b> Pilih Peran → Profil Bisnis (dengan Persetujuan) → NIB (Opsional) → Beranda → Post Kebutuhan → AI Match → Mutual Interest → Chat List → Chat Nego → Form Sepakat → RFQ PDF → Kontak Terbuka.<br>
+    <b>Di luar cakupan:</b> pembayaran, logistik, invoice, ERP.
+  </div>
+</div>
+</div>
 
 <script>
-/* ============ navigasi layar ============ */
-const chips=[...document.querySelectorAll('.chip')];
-const screens=[...document.querySelectorAll('.screen')];
-const statusbar=document.getElementById('statusbar');
+let role='buyer';
+const el=id=>document.getElementById(id);
 
-const NAV_ITEMS=[
-  {id:'home', label:'Beranda', go:'s-home', icon:'<path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/>'},
-  {id:'data', label:'Data', go:'s-dash', icon:'<path d="M4 20V10M10 20V4M16 20v-8M21 20H3"/>'},
-  {id:'fab'},
-  {id:'kawal', label:'Kawal', go:'s-kawal', icon:'<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/>'},
-  {id:'profil', label:'Profil', go:'s-profil', icon:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>'}
-];
-function navHTML(active){
-  return '<nav class="bottomnav" aria-label="Navigasi utama">'+NAV_ITEMS.map(it=>{
-    if(it.id==='fab') return `<button class="bn-fab" data-go="s-form" aria-label="Buat laporan baru">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>`;
-    const on=it.id===active?' on':'';
-    return `<button class="bn-item${on}" data-go="${it.go}">
-      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="${it.id===active?'#0E4FD1':'#93A2BE'}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${it.icon}</svg>
-      ${it.label}</button>`;
-  }).join('')+'</nav>';
+/* Flow order: Decides slide animation direction (Figma smart animate effect) */
+const ORDER={
+  'scr-splash':0, 'scr-role':1, 'scr-profile':2, 'scr-nib':3,
+  'scr-home':4, 'scr-notif':4.5, 'scr-post':5, 'scr-match':6, 'scr-chat-list':6.5, 'scr-chat':7, 'scr-agree':8,
+  'scr-rfq':9, 'scr-contact':10, 'scr-profil':11
+};
+
+/* Assign auto stagger entrance delays on layout elements */
+document.querySelectorAll('.scr').forEach(scr=>{
+  const items=[];
+  [...scr.children].forEach(ch=>{
+    if(ch.matches('.sb,.nav,.overlay,.toast'))return;
+    if(ch.matches('.body')){
+      [...ch.children].forEach(c=>{
+        if(c.matches('.pad')) items.push(...c.children); else items.push(c);
+      });
+    }else if(ch.matches('.msgs')){ items.push(...ch.children); }
+    else if(ch.matches('.splash')){ [...ch.children].forEach(c=>{ if(!c.matches('.sb')) items.push(c); }); }
+    else items.push(ch);
+  });
+  items.forEach((it,i)=>{
+    it.classList.add('fx');
+    it.style.animationDelay=(70+Math.min(i,9)*55)+'ms';
+  });
+});
+
+/* Butter-smooth page transitions with slide direction detection */
+function go(id){
+  const nxt=el(id), cur=document.querySelector('.scr.on');
+  if(!nxt||nxt===cur)return;
+  const dir=((ORDER[id]??50)>=(cur?(ORDER[cur.id]??0):0))?'fwd':'back';
+  document.querySelectorAll('.scr.leaving').forEach(s=>s.classList.remove('leaving','fwd','back'));
+  if(cur){
+    cur.classList.remove('on','fwd','back');
+    cur.classList.add('leaving',dir);
+    setTimeout(()=>cur.classList.remove('leaving','fwd','back'),560);
+  }
+  nxt.classList.remove('on','fwd','back');
+  void nxt.offsetWidth;              /* Force repaint for entrance animations */
+  nxt.classList.add('on',dir);
+  const b=nxt.querySelector('.body'); if(b) b.scrollTop=0;
+  countUp(nxt);
+  document.querySelectorAll('#chipbar button').forEach(c=>c.classList.toggle('hot',c.dataset.s===id));
 }
-screens.forEach(s=>{
-  const nav=s.dataset.nav;
-  if(nav) s.insertAdjacentHTML('beforeend',navHTML(nav));
-});
+document.querySelectorAll('#chipbar button').forEach(c=>c.onclick=()=>go(c.dataset.s));
 
-function goTo(id){
-  screens.forEach(s=>s.classList.toggle('active',s.id===id));
-  chips.forEach(c=>c.classList.toggle('on',c.dataset.go===id));
-  const sc=document.getElementById(id);
-  statusbar.classList.toggle('light',sc.dataset.status==='light');
-  sc.querySelector('.body')?.scrollTo(0,0);
+/* Smoother counting numeric increments for dashboard stats */
+function countUp(scr){
+  scr.querySelectorAll('.num').forEach(n=>{
+    if(!n.dataset.t) n.dataset.t=n.textContent.trim();
+    const raw=n.dataset.t, target=parseInt(raw.replace(/\./g,''),10);
+    if(isNaN(target)) return;
+    const t0=performance.now(), dur=800;
+    (function f(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      n.textContent=Math.round(target*e).toLocaleString('id-ID');
+      if(p<1) requestAnimationFrame(f); else n.textContent=raw;
+    })(t0);
+  });
 }
-document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-go]');
-  if(t) goTo(t.dataset.go);
-});
-// deep-link: ?s=s-home atau #s-home langsung buka layar itu; ?bare=1 sembunyikan chrome panggung
-const params=new URLSearchParams(location.search);
-const deepTarget=params.get('s')||location.hash.slice(1);
-if(deepTarget && document.getElementById(deepTarget)) goTo(deepTarget);
-if(params.has('bare')) document.body.classList.add('bare');
 
-/* ============ interaksi kecil ============ */
-// urgensi
-document.querySelectorAll('.urg').forEach(b=>{
-  b.addEventListener('click',()=>{
-    document.querySelectorAll('.urg').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on');
+function setRole(r){
+  role=r;
+  document.querySelectorAll('.dyn').forEach(d=>{
+    d.textContent=(r==='producer')?d.dataset.producer:d.dataset.buyer;
   });
-});
-// pilih kategori
-document.querySelectorAll('.pick').forEach(b=>{
-  b.addEventListener('click',()=>{
-    document.querySelectorAll('.pick').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on');
-  });
-});
-// toggle
-document.querySelectorAll('.toggle').forEach(t=>{
-  t.addEventListener('click',()=>{
-    t.classList.toggle('on');
-    t.setAttribute('aria-checked',t.classList.contains('on'));
-  });
-});
-// upvote
-const upBtn=document.getElementById('upvoteBtn'),upN=document.getElementById('upvoteN');
-let up=false;
-upBtn.addEventListener('click',()=>{
-  up=!up;
-  upBtn.classList.toggle('on',up);
-  upBtn.setAttribute('aria-pressed',up);
-  upN.textContent=up?28:27;
-});
-// segmen sosmed
-document.querySelectorAll('.seg button').forEach(b=>{
-  b.addEventListener('click',()=>{
-    document.querySelectorAll('.seg button').forEach(x=>{x.classList.remove('on');x.setAttribute('aria-selected','false')});
-    b.classList.add('on');b.setAttribute('aria-selected','true');
-  });
-});
-// voting verifikasi
-const stamp=document.getElementById('stamp'),voteMsg=document.getElementById('voteMsg');
-const qCount=document.getElementById('qCount'),qSlot2=document.getElementById('qSlot2');
-let voted=false;
-document.getElementById('voteYes').addEventListener('click',function(){
-  if(voted)return; voted=true;
-  this.classList.add('on');
-  qSlot2.style.background='#189A6C';qSlot2.style.color='#fff';qSlot2.textContent='RP';
-  qCount.textContent='2 dari 3';
-  stamp.classList.add('show');
-  voteMsg.className='verify-result ok';
-  voteMsg.textContent='Konfirmasimu tercatat dengan bukti foto dan lokasi. Tinggal 1 konfirmasi lagi sebelum status resmi berubah jadi Selesai Terverifikasi. +15 poin masuk setelah kuorum penuh.';
-});
-document.getElementById('voteNo').addEventListener('click',function(){
-  if(voted)return; voted=true;
-  this.classList.add('on');
-  voteMsg.className='verify-result fail';
-  voteMsg.textContent='Terima kasih sudah jujur. Klaim instansi dibatalkan, laporan kembali berstatus Belum Selesai dan naik prioritas. Kejujuranmu menjaga sistem ini tetap berarti.';
-});
+}
+
+function toast(t){
+  const x=el('toast');x.textContent=t;x.classList.add('show');
+  clearTimeout(x._t);x._t=setTimeout(()=>x.classList.remove('show'),2200);
+}
+
+/* Save profile details and display consent validations */
+function saveProfileAndContinue() {
+  const consentChecked = el('p-consent').checked;
+  if (!consentChecked) {
+    toast('⚠️ Persetujuan kontak wajib dicentang.');
+    return;
+  }
+  
+  const compVal = el('p-company').value.trim() || 'UD Berkah Pangan';
+  const cityVal = el('p-city').value.trim() || 'Bandung, Jawa Barat';
+  
+  /* Dynamically update updated profile fields throughout the app */
+  document.querySelectorAll('.sign-comp-name').forEach(e => e.textContent = compVal);
+  document.querySelectorAll('.profile-company-lbl').forEach(e => e.textContent = compVal);
+  el('profile-city-lbl').textContent = cityVal;
+  
+  el('homeUserName').innerHTML = `Bu Sari — ${compVal} <span class="badge-nib" id="homeNib" style="display:none"><svg viewBox="0 0 12 12"><use href="#check"/></svg>NIB</span>`;
+  
+  go('scr-nib');
+}
+
+/* NIB Check action with status summaries */
+function verifyNib(){
+  const b=el('nibBtn');
+  b.textContent = 'Memeriksa NIB…';
+  b.style.opacity = .7;
+  
+  setTimeout(()=>{
+    const compVal = el('p-company').value.trim() || 'UD Berkah Pangan';
+    const nibVal = el('nibNum').value.trim() || '1309 2200 4517 88';
+    
+    // Set dynamic text in custom summary state
+    el('nibResultCompany').textContent = compVal;
+    el('nibResultVal').textContent = nibVal;
+
+    el('nibIntro').style.display='none';
+    el('nibDone').classList.add('show');
+    el('homeNib').style.display='inline-flex';
+    el('profileNib').style.display='inline-flex';
+    el('profileNibStatus').innerHTML = 'Status: <b style="color:#2E8F5B">Terverifikasi ✓</b>';
+    el('skipNibBtn').style.display = 'none';
+    
+    toast('✓ NIB terverifikasi!');
+  },1100);
+}
+
+function publishPost(){
+  toast('Posting terbit! Ali mencari mitra… ✨');
+  setTimeout(()=>go('scr-match'),900);
+}
+
+function interested(){
+  toast('Minat terkirim 💚');
+  setTimeout(()=>el('matchOverlay').classList.add('show'),700);
+}
+function closeOverlay(){el('matchOverlay').classList.remove('show')}
+
+function acceptOffer(){
+  const o=el('offer1');o.classList.add('accepted');
+  o.querySelector('.ok').innerHTML='<span style="flex:1;text-align:center;font-size:8px;font-weight:700;color:#2E8F5B;padding:6px 0">✓ Penawaran disetujui</span>';
+  el('pinTitle').textContent='Draft Kesepakatan · 100% lengkap';
+  el('pinSub').textContent='Siap ditandatangani kedua pihak';
+  addMsg('out','Setuju pak, Rp37.000/kg deal! Saya buka Form Kesepakatan ya 🤝');
+  setTimeout(()=>addMsg('in','Siap Bu Sari! Saya sudah tanda tangan dari sisi kami. 🌶️'),1100);
+}
+function counterOffer(){
+  addMsg('out','Bisa Rp36.800/kg pak kalau kami ambil 600 kg/minggu? 😄');
+  setTimeout(()=>addMsg('in','Wah boleh juga, saya hitung dulu ya bu…'),1100);
+}
+function sendMsg(){
+  const f=el('chatInput');if(!f.value.trim())return;
+  addMsg('out',f.value);f.value='';
+  setTimeout(()=>addMsg('in','Baik Bu Sari, dicatat ya 👍'),1200);
+}
+
+function addMsg(dir,text){
+  const m=document.createElement('div');
+  m.className='msg '+dir+' pop';
+  const t=new Date();
+  const timeStr = String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+  
+  if (dir === 'out') {
+    m.innerHTML = text + `
+      <div style="display:flex; justify-content:flex-end; align-items:center; gap:3px; margin-top:2px">
+        <time style="color:rgba(255,255,255,0.7); font-size:6px; margin:0">${timeStr}</time>
+        <svg width="10" height="10" fill="none" stroke="#FFD27A" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" /></svg>
+      </div>
+    `;
+  } else {
+    m.innerHTML = text + `<time>${timeStr}</time>`;
+  }
+  
+  el('msgs').appendChild(m);
+  el('msgs').scrollTop=99999;
+}
+
+function signAgreement(){
+  el('signMe').textContent='✓ Sudah setuju';el('signMe').style.color='#2E8F5B';
+  const s=el('stpSepakat');s.classList.add('done');
+  s.querySelector('.c').innerHTML='<svg viewBox="0 0 12 12" width="10" height="10" style="color:#2E8F86"><use href="#check"/></svg>';
+  el('stl3').classList.add('done');
+  el('signBtn').style.display='none';el('rfqBtn').style.display='flex';
+  toast('🎉 Kesepakatan tercapai!');
+}
 </script>
 </body>
 </html>

@@ -9,7 +9,6 @@ Unlike marketplaces, FoodLink AI focuses on partner discovery, trust, negotiatio
 ## User Types
 - Producer
 - Buyer
-- Admin
 
 ## Features
 - NIB Verification (optional)
