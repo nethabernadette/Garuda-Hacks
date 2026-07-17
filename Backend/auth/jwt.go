@@ -1,18 +1,10 @@
 package auth
 
 import (
-	"errors"
-	"os"
-	"strconv"
 	"time"
 
 	"garuda-hacks/backend/users"
 	"github.com/golang-jwt/jwt/v5"
-)
-
-const (
-	defaultAccessTokenTTL = time.Hour
-	jwtIssuer             = "harvestlink"
 )
 
 type TokenManager struct {
@@ -28,21 +20,12 @@ type Claims struct {
 }
 
 func NewTokenManagerFromEnv() (*TokenManager, error) {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		return nil, ErrJWTSecretNotSet
+	config, err := LoadConfigFromEnv()
+	if err != nil {
+		return nil, err
 	}
 
-	ttl := defaultAccessTokenTTL
-	if rawTTL := os.Getenv("JWT_ACCESS_TOKEN_TTL_SECONDS"); rawTTL != "" {
-		seconds, err := strconv.Atoi(rawTTL)
-		if err != nil || seconds <= 0 {
-			return nil, errors.New("JWT_ACCESS_TOKEN_TTL_SECONDS must be a positive integer")
-		}
-		ttl = time.Duration(seconds) * time.Second
-	}
-
-	return NewTokenManager(secret, ttl), nil
+	return NewTokenManager(config.JWTSecret, config.AccessTokenTTL), nil
 }
 
 func NewTokenManager(secret string, accessTokenTTL time.Duration) *TokenManager {
@@ -75,7 +58,12 @@ func (m *TokenManager) GenerateAccessToken(user *users.User) (string, error) {
 }
 
 func (m *TokenManager) ValidateAccessToken(tokenString string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+	parser := jwt.NewParser(
+		jwt.WithExpirationRequired(),
+		jwt.WithIssuer(jwtIssuer),
+	)
+
+	token, err := parser.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if token.Method != jwt.SigningMethodHS256 {
 			return nil, ErrInvalidToken
 		}
@@ -90,6 +78,9 @@ func (m *TokenManager) ValidateAccessToken(tokenString string) (*Claims, error) 
 		return nil, ErrInvalidToken
 	}
 	if !claims.Role.IsValid() {
+		return nil, ErrInvalidToken
+	}
+	if claims.UserID == "" || claims.Email == "" || claims.Subject == "" || claims.Subject != claims.UserID {
 		return nil, ErrInvalidToken
 	}
 

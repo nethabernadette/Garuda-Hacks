@@ -3,26 +3,20 @@ package auth
 import "garuda-hacks/backend/users"
 
 type RegisterRequest struct {
-	Role        users.UserRole `json:"role"`
-	CompanyName string         `json:"company_name"`
-	Email       string         `json:"email"`
-	Password    string         `json:"password"`
-	Phone       string         `json:"phone"`
-	City        string         `json:"city"`
+	Role     users.UserRole `json:"role" validate:"required,oneof=BUYER PRODUCER ADMIN"`
+	Email    string         `json:"email" validate:"required,email"`
+	Password string         `json:"password" validate:"required,min=8"`
 }
 
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
 }
 
 type UserResponse struct {
-	ID          string         `json:"id"`
-	Role        users.UserRole `json:"role"`
-	CompanyName string         `json:"company_name"`
-	Email       string         `json:"email"`
-	Phone       string         `json:"phone"`
-	City        string         `json:"city"`
+	ID    string         `json:"id"`
+	Role  users.UserRole `json:"role"`
+	Email string         `json:"email"`
 }
 
 type RegisterResponse struct {
@@ -43,17 +37,9 @@ type JSONResponse struct {
 }
 
 func NewUserResponse(user *users.User) UserResponse {
-	var profile users.UserProfile
-	if user.Profile != nil {
-		profile = *user.Profile
-	}
-
 	return UserResponse{
-		ID:          user.ID,
-		Role:        user.Role,
-		CompanyName: profile.CompanyName,
-		Email:       user.Email,
-		Phone:       profile.Phone,
-		City:        profile.City,
+		ID:    user.ID,
+		Role:  user.Role,
+		Email: user.Email,
 	}
 }

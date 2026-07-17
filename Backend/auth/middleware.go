@@ -48,6 +48,11 @@ func Authorize(roles ...users.UserRole) func(http.Handler) http.Handler {
 				return
 			}
 
+			if len(allowedRoles) == 0 {
+				next.ServeHTTP(w, r)
+				return
+			}
+
 			if _, ok := allowedRoles[claims.Role]; !ok {
 				writeError(w, http.StatusForbidden, ErrForbidden.Error())
 				return

@@ -10,19 +10,28 @@ import (
 
 var ErrCredentialsNotFound = errors.New("credentials not found")
 
-type CredentialRepository interface {
-	FindCredentialsByEmail(ctx context.Context, email string) (*users.User, error)
+type Repository interface {
+	CreateUser(ctx context.Context, user *users.User) error
+	FindUserByEmail(ctx context.Context, email string) (*users.User, error)
 }
 
-type GormCredentialRepository struct {
+type GormRepository struct {
 	db *gorm.DB
 }
 
-func NewGormCredentialRepository(db *gorm.DB) *GormCredentialRepository {
-	return &GormCredentialRepository{db: db}
+func NewGormRepository(db *gorm.DB) *GormRepository {
+	return &GormRepository{db: db}
 }
 
-func (r *GormCredentialRepository) FindCredentialsByEmail(ctx context.Context, email string) (*users.User, error) {
+func NewGormCredentialRepository(db *gorm.DB) *GormRepository {
+	return NewGormRepository(db)
+}
+
+func (r *GormRepository) CreateUser(ctx context.Context, user *users.User) error {
+	return r.db.WithContext(ctx).Create(user).Error
+}
+
+func (r *GormRepository) FindUserByEmail(ctx context.Context, email string) (*users.User, error) {
 	var user users.User
 	if err := r.db.WithContext(ctx).First(&user, "email = ?", email).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -32,4 +41,8 @@ func (r *GormCredentialRepository) FindCredentialsByEmail(ctx context.Context, e
 	}
 
 	return &user, nil
+}
+
+func (r *GormRepository) FindCredentialsByEmail(ctx context.Context, email string) (*users.User, error) {
+	return r.FindUserByEmail(ctx, email)
 }
